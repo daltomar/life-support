@@ -1,0 +1,20 @@
+[[artists]]
+slug     = "prohlis-disco"
+name     = "PROHLIS Disco"
+city     = "Dresden"
+portrait = ""
+bio      = "PROHLIS Disco is a Dresden-based collective exploring the edges of electronic music and club culture."
+
+[[releases]]
+slug        = "disco-01"
+title       = "01.08.2017"
+artist      = "prohlis-disco"
+catalog_num = "LSR001"
+date        = "2017-08-01"
+format      = "Digital"
+description = "Recorded live at the PROHLIS Disco night on 01 August 2017. An evening of irregular rhythms and unresolved endings."
+cover       = ""
+
+  [[releases.tracks]]
+  title = "Irregular Resignation"
+  file  = "PROHLIS-Disco-01_01-08-2017-Irregular-Resignation.mp3"

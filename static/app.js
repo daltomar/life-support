@@ -63,6 +63,20 @@ if (track) {
   });
 }
 
+// ── Load a release into the player ──────────────────────
+window.loadRelease = function(btn) {
+  const json = btn.dataset.tracks;
+  if (!json) return;
+  let tracks;
+  try { tracks = JSON.parse(json); } catch(_) { return; }
+  if (!tracks.length) return;
+  const t = tracks[0];
+  audio.src = '/media/' + t.file;
+  audio.play().catch(() => {});
+  const titleEl = document.querySelector('.player-title');
+  if (titleEl) titleEl.textContent = t.title;
+};
+
 // ── Nav swap (keep audio playing across pages) ──────────
 function setActiveNav(url) {
   const path = new URL(url, location.href).pathname;

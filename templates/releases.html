@@ -3,60 +3,72 @@
 {% block title %}Releases — Life Support Records{% endblock %}
 
 {% block content %}
-<div class="releases-header">
-  <h1>Releases</h1>
-  <span class="releases-count">[PAGE CONTENT AREA]</span>
-</div>
-<div class="releases-grid">
-  <div class="release-card">
-    <div class="release-cover"><span class="release-cover-label">[cover]</span></div>
-    <div class="release-title">[Release title]</div>
-    <div class="release-artist">[Artist]</div>
+<h1>Releases</h1>
+
+{% if let Some(f) = featured %}
+<section aria-label="Latest release">
+  <div class="featured-release">
+    <div class="featured-cover">
+      {% if let Some(img) = f.cover %}
+      <img src="/media/covers/{{ img }}" alt="{{ f.title }} cover">
+      {% else %}
+      <span class="cover-placeholder-label">[COVER]</span>
+      {% endif %}
+    </div>
+    <div class="featured-info">
+      <span class="mono-label featured-eyebrow">LATEST RELEASE · {{ f.catalog_num }}</span>
+      <h2 class="featured-title">{{ f.title }}</h2>
+      <p class="featured-artist"><a href="/artists/{{ f.artist_slug }}">{{ f.artist_name }}</a></p>
+      <p class="featured-meta">{{ f.date }} · {{ f.format }} · {{ f.track_count }} {% if f.track_count == 1 %}TRACK{% else %}TRACKS{% endif %}</p>
+      {% if !f.description.is_empty() %}
+      <p class="featured-desc">{{ f.description }}</p>
+      {% endif %}
+      <div class="featured-actions">
+        <button class="btn-play-release"
+                data-tracks="{{ f.tracks_json }}"
+                onclick="loadRelease(this)"
+                aria-label="Play {{ f.title }}">
+          <svg width="10" height="12" viewBox="0 0 10 12" fill="currentColor" aria-hidden="true"><polygon points="0,0 10,6 0,12"/></svg>
+          Play release
+        </button>
+        <a class="btn-view-release" href="/releases/{{ f.slug }}">View release</a>
+      </div>
+    </div>
   </div>
-  <div class="release-card">
-    <div class="release-cover"><span class="release-cover-label">[cover]</span></div>
-    <div class="release-title">[Release title]</div>
-    <div class="release-artist">[Artist]</div>
+</section>
+{% endif %}
+
+{% if !catalog.is_empty() %}
+<section aria-label="Catalog">
+  <div class="catalog-header">
+    <span class="mono-label">CATALOG</span>
+    <div class="catalog-rule" aria-hidden="true"></div>
   </div>
-  <div class="release-card">
-    <div class="release-cover"><span class="release-cover-label">[cover]</span></div>
-    <div class="release-title">[Release title]</div>
-    <div class="release-artist">[Artist]</div>
+  {% for row in catalog %}
+  <div class="catalog-row">
+    <span class="catalog-num">{{ row.position }}</span>
+    <div class="catalog-cover">
+      {% if let Some(img) = row.cover %}
+      <img src="/media/covers/{{ img }}" alt="{{ row.title }} cover">
+      {% else %}
+      <span class="cover-placeholder-label">[COVER]</span>
+      {% endif %}
+    </div>
+    <div class="catalog-title-col">
+      <a href="/releases/{{ row.slug }}">{{ row.title }}</a>
+      <a class="m-artist" href="/artists/{{ row.artist_slug }}">{{ row.artist_name }}</a>
+      <span class="m-date">{{ row.date }} · {{ row.format }}</span>
+    </div>
+    <a class="catalog-artist" href="/artists/{{ row.artist_slug }}">{{ row.artist_name }}</a>
+    <span class="catalog-meta">{{ row.date }} · {{ row.format }}</span>
+    <button class="btn-play-row"
+            data-tracks="{{ row.slug }}"
+            onclick="loadRelease(this)"
+            aria-label="Play {{ row.title }}">
+      <svg width="10" height="12" viewBox="0 0 10 12" fill="currentColor" aria-hidden="true"><polygon points="0,0 10,6 0,12"/></svg>
+    </button>
   </div>
-  <div class="release-card">
-    <div class="release-cover"><span class="release-cover-label">[cover]</span></div>
-    <div class="release-title">[Release title]</div>
-    <div class="release-artist">[Artist]</div>
-  </div>
-  <div class="release-card">
-    <div class="release-cover"><span class="release-cover-label">[cover]</span></div>
-    <div class="release-title">[Release title]</div>
-    <div class="release-artist">[Artist]</div>
-  </div>
-  <div class="release-card">
-    <div class="release-cover"><span class="release-cover-label">[cover]</span></div>
-    <div class="release-title">[Release title]</div>
-    <div class="release-artist">[Artist]</div>
-  </div>
-  <div class="release-card">
-    <div class="release-cover"><span class="release-cover-label">[cover]</span></div>
-    <div class="release-title">[Release title]</div>
-    <div class="release-artist">[Artist]</div>
-  </div>
-  <div class="release-card">
-    <div class="release-cover"><span class="release-cover-label">[cover]</span></div>
-    <div class="release-title">[Release title]</div>
-    <div class="release-artist">[Artist]</div>
-  </div>
-  <div class="release-card">
-    <div class="release-cover"><span class="release-cover-label">[cover]</span></div>
-    <div class="release-title">[Release title]</div>
-    <div class="release-artist">[Artist]</div>
-  </div>
-  <div class="release-card">
-    <div class="release-cover"><span class="release-cover-label">[cover]</span></div>
-    <div class="release-title">[Release title]</div>
-    <div class="release-artist">[Artist]</div>
-  </div>
-</div>
+  {% endfor %}
+</section>
+{% endif %}
 {% endblock %}

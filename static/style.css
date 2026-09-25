@@ -308,62 +308,320 @@ main h1 {
   margin-bottom: 48px;
 }
 
-/* ── Releases grid ── */
-.releases-header {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  margin-bottom: 48px;
-}
-
-.releases-count {
+/* ── Shared: mono label ── */
+.mono-label {
   font-family: 'Space Mono', 'Courier New', monospace;
   font-size: 11px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-
-.releases-grid {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 16px;
-}
-
-.release-card {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.release-cover {
-  aspect-ratio: 1;
-  background: var(--tile);
-  width: 100%;
-  display: flex;
-  align-items: flex-end;
-  padding: 10px;
-}
-
-.release-cover-label {
-  font-family: 'Space Mono', 'Courier New', monospace;
-  font-size: 9px;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--dim);
 }
 
-.release-title {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text);
-  line-height: 1.3;
+/* ── Shared: cover / portrait placeholders ── */
+.featured-cover,
+.catalog-cover,
+.artist-portrait-wrap a {
+  background: var(--tile);
+  position: relative;
 }
 
-.release-artist {
+.cover-placeholder-label {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  font-family: 'Space Mono', 'Courier New', monospace;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+
+/* ── Featured release ── */
+.featured-release {
+  display: flex;
+  gap: 44px;
+  margin-bottom: 40px;
+}
+
+.featured-cover {
+  width: 320px;
+  height: 320px;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.featured-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.featured-info {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-width: 560px;
+}
+
+.featured-eyebrow {
+  color: var(--accent);
+}
+
+.featured-title {
+  font-size: 48px;
+  font-weight: 800;
+  font-stretch: 70%;
+  text-transform: uppercase;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  color: var(--text);
+}
+
+.featured-artist a {
+  font-size: 19px;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.featured-artist a:hover {
+  color: var(--accent);
+}
+
+.featured-meta {
+  font-family: 'Space Mono', 'Courier New', monospace;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.featured-desc {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+.featured-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: auto;
+}
+
+.btn-play-release {
+  height: 44px;
+  padding: 0 22px;
+  background: var(--accent);
+  color: var(--frame);
+  border: none;
+  font-family: 'Archivo', 'Helvetica Neue', Helvetica, sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: opacity 0.15s;
+}
+
+.btn-play-release:hover {
+  opacity: 0.85;
+}
+
+.btn-view-release {
+  height: 44px;
+  padding: 0 22px;
+  background: none;
+  color: var(--text);
+  border: 1px solid #4A4640;
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.btn-view-release:hover {
+  border-color: var(--muted);
+  color: var(--text);
+}
+
+/* ── Catalog list ── */
+.catalog-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+
+.catalog-rule {
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+}
+
+.catalog-row {
+  display: grid;
+  grid-template-columns: 36px 64px minmax(0, 2fr) minmax(0, 1.4fr) 150px 44px;
+  gap: 20px;
+  align-items: center;
+  min-height: 84px;
+  border-bottom: 1px solid var(--line);
+}
+
+.catalog-num {
+  font-family: 'Space Mono', 'Courier New', monospace;
+  font-size: 11px;
+  color: var(--dim);
+}
+
+.catalog-cover {
+  width: 64px;
+  height: 64px;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.catalog-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.catalog-title-col {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.catalog-title-col a {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--text);
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.catalog-title-col a:hover {
+  color: var(--accent);
+}
+
+.m-artist,
+.m-date {
+  display: none;
+}
+
+.catalog-artist {
+  font-size: 15px;
+  color: var(--muted);
+  text-decoration: none;
+}
+
+a.catalog-artist:hover {
+  color: var(--text);
+}
+
+.catalog-meta {
+  font-family: 'Space Mono', 'Courier New', monospace;
   font-size: 12px;
   color: var(--muted);
-  margin-top: 2px;
+  text-transform: uppercase;
+}
+
+.btn-play-row {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid #4A4640;
+  background: none;
+  color: var(--text);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+}
+
+.btn-play-row:hover {
+  background: var(--line);
+}
+
+/* ── Artists grid ── */
+.artists-grid {
+  display: grid;
+  gap: 28px;
+  justify-content: start;
+}
+
+.artist-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.artist-portrait-wrap {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+}
+
+.artist-portrait-wrap a {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.artist-portrait-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.artist-num {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  font-family: 'Space Mono', 'Courier New', monospace;
+  font-size: 11px;
+  color: var(--dim);
+}
+
+.portrait-placeholder-label {
+  bottom: 12px;
+  left: 12px;
+}
+
+.artist-name a {
+  font-size: 32px;
+  font-weight: 800;
+  font-stretch: 70%;
+  text-transform: uppercase;
+  line-height: 1;
+  letter-spacing: 0.03em;
+  text-decoration: none;
+  color: var(--text);
+}
+
+.artist-name a:hover {
+  color: var(--accent);
+}
+
+.artist-meta {
+  font-family: 'Space Mono', 'Courier New', monospace;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
 }
 
 /* ── Mobile (< 768px) ── */
@@ -460,8 +718,65 @@ main h1 {
     margin-bottom: 32px;
   }
 
-  .releases-grid {
-    grid-template-columns: repeat(2, 1fr);
+  main h2 {
+    font-size: 36px;
+  }
+
+  /* Featured release: stack vertically */
+  .featured-release {
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .featured-cover {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1;
+  }
+
+  .featured-title {
+    font-size: 36px;
+  }
+
+  .featured-actions {
+    flex-direction: column;
+  }
+
+  .btn-play-release,
+  .btn-view-release {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Catalog rows: hide number and date columns, collapse to 3-col */
+  .catalog-row {
+    grid-template-columns: 64px minmax(0, 1fr) 44px;
+  }
+
+  .catalog-num,
+  .catalog-artist,
+  .catalog-meta {
+    display: none;
+  }
+
+  .m-artist {
+    display: block;
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  .m-date {
+    display: block;
+    font-family: 'Space Mono', 'Courier New', monospace;
+    font-size: 11px;
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  /* Artists: one per row */
+  .artists-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
   }
 
   .now-playing {
