@@ -1,4 +1,12 @@
 @font-face {
+  font-family: 'Creepster';
+  src: url('/static/fonts/creepster-regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
   font-family: 'Archivo';
   font-style: normal;
   font-weight: 100 900;
@@ -32,6 +40,7 @@
   --muted:  #9C958A;
   --dim:    #8A8378;
   --accent: #39FF14;
+  --font-display: 'Creepster', 'Archivo', Impact, sans-serif;
 }
 
 *, *::before, *::after {
@@ -89,12 +98,17 @@ header {
   gap: 4px;
 }
 
-.wordmark-name {
-  font-size: 28px;
-  font-weight: 800;
-  font-stretch: 70%;
-  letter-spacing: 0.05em;
+.font-display {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-stretch: normal;
+  font-synthesis: none;
+  letter-spacing: 0.02em;
   line-height: 1;
+}
+
+.wordmark-name {
+  font-size: 34px;
   color: var(--text);
 }
 
@@ -649,7 +663,7 @@ a.catalog-artist:hover {
   }
 
   .wordmark-name {
-    font-size: 20px;
+    font-size: 24px;
   }
 
   .wordmark-slogan {
