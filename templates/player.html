@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ track_title }}</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #000;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: monospace;
+    }
+
+    .player {
+      width: 280px;
+      border: 1px solid #39FF14;
+      padding: 18px 20px 16px;
+      box-shadow: 0 0 24px rgba(57,255,20,.08);
+    }
+
+    .track-title {
+      color: #39FF14;
+      font-size: 11px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      line-height: 1.5;
+      margin-bottom: 4px;
+    }
+
+    .track-meta {
+      color: rgba(57,255,20,.45);
+      font-size: 9px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn {
+      flex-shrink: 0;
+      width: 28px;
+      height: 28px;
+      border: 1px solid #39FF14;
+      background: none;
+      color: #39FF14;
+      cursor: pointer;
+      font-size: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background .1s, color .1s;
+    }
+    .btn:hover { background: #39FF14; color: #000; }
+
+    .scrubber {
+      flex: 1;
+      height: 2px;
+      background: #1c1c1c;
+      cursor: pointer;
+      position: relative;
+    }
+    .scrubber-fill {
+      height: 100%;
+      background: #39FF14;
+      width: 0%;
+      pointer-events: none;
+    }
+
+    .time {
+      flex-shrink: 0;
+      color: rgba(57,255,20,.7);
+      font-size: 9px;
+      letter-spacing: .05em;
+      min-width: 32px;
+      text-align: right;
+    }
+  </style>
+</head>
+<body>
+  <div class="player">
+    <div class="track-title">{{ track_title }}</div>
+    <div class="track-meta">{{ track_meta }}</div>
+    <div class="controls">
+      <button class="btn" id="btn" aria-label="Play">&#9654;</button>
+      <div class="scrubber" id="scrubber">
+        <div class="scrubber-fill" id="fill"></div>
+      </div>
+      <span class="time" id="time">0:00</span>
+    </div>
+  </div>
+
+  <audio id="audio" preload="metadata" src="/media/{{ track_file|urlencode }}"></audio>
+
+  <script>
+    const audio    = document.getElementById('audio');
+    const btn      = document.getElementById('btn');
+    const fill     = document.getElementById('fill');
+    const scrubber = document.getElementById('scrubber');
+    const time     = document.getElementById('time');
+
+    function fmt(s) {
+      const m = Math.floor(s / 60);
+      const sec = Math.floor(s % 60).toString().padStart(2, '0');
+      return m + ':' + sec;
+    }
+
+    btn.addEventListener('click', () => {
+      if (audio.paused) {
+        audio.play().catch(() => {
+          btn.innerHTML = '&#9654;';
+          btn.setAttribute('aria-label', 'Play');
+        });
+        btn.innerHTML = '&#9646;&#9646;';
+        btn.setAttribute('aria-label', 'Pause');
+      } else {
+        audio.pause();
+        btn.innerHTML = '&#9654;';
+        btn.setAttribute('aria-label', 'Play');
+      }
+    });
+
+    audio.addEventListener('timeupdate', () => {
+      const pct = audio.duration ? (audio.currentTime / audio.duration) * 100 : 0;
+      fill.style.width = pct + '%';
+      time.textContent = fmt(audio.currentTime);
+    });
+
+    audio.addEventListener('ended', () => {
+      btn.innerHTML = '&#9654;';
+      btn.setAttribute('aria-label', 'Play');
+      fill.style.width = '0%';
+      time.textContent = '0:00';
+    });
+
+    scrubber.addEventListener('click', e => {
+      if (!audio.duration) return;
+      const r = scrubber.getBoundingClientRect();
+      audio.currentTime = ((e.clientX - r.left) / r.width) * audio.duration;
+    });
+  </script>
+</body>
+</html>
