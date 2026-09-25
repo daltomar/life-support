@@ -92,17 +92,54 @@ cover       = "filename.jpg"       # filename inside media/covers/; omit if none
 
 ---
 
-## Naming conventions
+## Slugs
 
-**Slugs** — lowercase letters, numbers, and hyphens only. No spaces or special characters.
-Good: `prohlis-disco`, `disco-01`. Bad: `PROHLIS Disco`, `disco_01`.
+A slug is the part of a URL that identifies a page: `/artists/prohlis-disco`,
+`/releases/disco-01`. Rules:
 
-**Image files** — any format the browser supports (JPG, PNG, WebP).
-Recommended sizes: covers **square** (e.g. 1000×1000 px), portraits **4:5 ratio**
-(e.g. 800×1000 px). Larger originals are fine; the browser scales them.
+- Lowercase letters, numbers, and hyphens only — no spaces, accents, or punctuation.
+- Set it once. Changing a slug after the page is published breaks any external
+  links to it.
 
-**Audio files** — MP3. Filenames can be anything but avoid spaces
-(use hyphens or underscores instead).
+Good: `prohlis-disco`, `disco-01`, `lsr001-ep`.
+Bad: `PROHLIS Disco`, `disco_01`, `release#2`.
+
+---
+
+## File types and sizes
+
+### Images (covers and portraits)
+
+| Format | Use | Notes |
+|--------|-----|-------|
+| JPG    | Photos, covers, portraits | Preferred. Export at quality 80–85%. |
+| WebP   | Photos | Smaller than JPG at the same quality; works in all modern browsers. |
+| PNG    | Logos, graphics with transparency | Produces large files for photos — avoid for covers/portraits. |
+
+Recommended export dimensions:
+
+- **Covers** — square, 1000×1000 px or larger. The site displays them at 320×320 px
+  on desktop and full-width on mobile; a 1000 px original keeps them sharp on
+  high-DPI screens without wasting bandwidth.
+- **Portraits** — 4:5 ratio (e.g. 800×1000 px).
+
+Target file size: **under 300 KB per image**. Above that, page load slows noticeably
+on mobile connections.
+
+### Audio
+
+MP3 only. The browser's `<audio>` element supports MP3 universally; WAV and FLAC
+do not work reliably in all browsers.
+
+| Bitrate | Use |
+|---------|-----|
+| 320 kbps | Recommended — standard release quality. |
+| 192 kbps | Acceptable for streaming previews. |
+
+No server-side file size limit — the server streams with HTTP byte-range requests,
+so even a large file starts playing immediately without buffering the whole file.
+
+Avoid spaces in filenames; use hyphens or underscores instead.
 
 ---
 
