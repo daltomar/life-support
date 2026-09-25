@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}Artists — Life Support Records{% endblock %}
+
+{% block content %}
+<h1>Artists</h1>
+
+<div class="artists-grid" style="grid-template-columns: repeat({{ grid_cols }}, minmax(0, 336px))">
+  {% for artist in artists %}
+  <article class="artist-card">
+    <div class="artist-portrait-wrap">
+      <a href="/artists/{{ artist.slug }}">
+        {% if let Some(img) = artist.portrait %}
+        <img src="/media/portraits/{{ img }}" alt="{{ artist.name }} portrait">
+        {% else %}
+        <span class="cover-placeholder-label portrait-placeholder-label">[PORTRAIT]</span>
+        {% endif %}
+      </a>
+      <span class="artist-num" aria-hidden="true">{{ artist.position }}</span>
+    </div>
+    <div class="artist-name"><a href="/artists/{{ artist.slug }}">{{ artist.name }}</a></div>
+    <div class="artist-meta">{{ artist.city }} · {{ artist.releases_label }}</div>
+  </article>
+  {% endfor %}
+</div>
+{% endblock %}

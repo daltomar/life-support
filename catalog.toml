@@ -1,0 +1,30 @@
+[[artists]]
+slug     = "prohlis"
+name     = "PROHLIS"
+city     = "Rivers Of Nihil"
+portrait = ""
+bio      = "PROHLIS - exploring the edges"
+
+[[releases]]
+slug        = "disco-02"
+title       = "Digital Labyrinth"
+artist      = "prohlis"
+catalog_num = "LSR002"
+date        = "2024-08-01"
+format      = "Digital"
+description = "For the second time, irregular rhythms and unresolved endings."
+cover       = ""
+
+[[releases]]
+slug        = "disco-01"
+title       = "Labyrinth Of Prohlis"
+artist      = "prohlis"
+catalog_num = "LSR001"
+date        = "2020-08-01"
+format      = "Digital"
+description = "A time of irregular rhythms and unresolved endings."
+cover       = ""
+
+  [[releases.tracks]]
+  title = "Irregular Resignation"
+  file  = "PROHLIS-Disco-01_01-08-2017-Irregular-Resignation.mp3"

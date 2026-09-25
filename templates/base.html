@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Life Support Records{% endblock %}</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="grain" aria-hidden="true"></div>
+
+  <div class="root">
+    <header>
+      <div class="logo-slot" aria-hidden="true"></div>
+      <div class="wordmark">
+        <span class="wordmark-name">LIFE SUPPORT RECORDS</span>
+        <span class="wordmark-slogan">YOUR SLOGAN HERE</span>
+      </div>
+      <button class="menu-btn" id="menu-btn" aria-label="Open menu" aria-expanded="false">
+        <span></span>
+        <span></span>
+      </button>
+    </header>
+
+    <nav aria-label="Main">
+      <button class="nav-close" id="nav-close" aria-label="Close menu">&#10005;</button>
+      <div>
+        <div class="nav-label">SIDE A</div>
+        <ul class="nav-list">
+          <li>
+            <a href="/releases" {% if active_nav.as_str() == "releases" %}aria-current="page"{% endif %}>
+              <span class="nav-num">01</span>
+              <span class="nav-label-text">Releases</span>
+              <span class="nav-dot" aria-hidden="true"></span>
+            </a>
+          </li>
+          <li>
+            <a href="/artists" {% if active_nav.as_str() == "artists" %}aria-current="page"{% endif %}>
+              <span class="nav-num">02</span>
+              <span class="nav-label-text">Artists</span>
+              <span class="nav-dot" aria-hidden="true"></span>
+            </a>
+          </li>
+          <li>
+            <a href="/listen" {% if active_nav.as_str() == "listen" %}aria-current="page"{% endif %}>
+              <span class="nav-num">03</span>
+              <span class="nav-label-text">Listen</span>
+              <span class="nav-dot" aria-hidden="true"></span>
+            </a>
+          </li>
+          <li>
+            <a href="/news" {% if active_nav.as_str() == "news" %}aria-current="page"{% endif %}>
+              <span class="nav-num">04</span>
+              <span class="nav-label-text">News</span>
+              <span class="nav-dot" aria-hidden="true"></span>
+            </a>
+          </li>
+          <li>
+            <a href="/about" {% if active_nav.as_str() == "about" %}aria-current="page"{% endif %}>
+              <span class="nav-num">05</span>
+              <span class="nav-label-text">About</span>
+              <span class="nav-dot" aria-hidden="true"></span>
+            </a>
+          </li>
+          <li>
+            <a href="/contact" {% if active_nav.as_str() == "contact" %}aria-current="page"{% endif %}>
+              <span class="nav-num">06</span>
+              <span class="nav-label-text">Contact</span>
+              <span class="nav-dot" aria-hidden="true"></span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="now-playing">
+        <div class="now-playing-label">NOW PLAYING</div>
+        <div class="player-row">
+          <div class="player-cover" aria-hidden="true"></div>
+          <div class="player-info">
+            <div class="player-title">Irregular Resignation</div>
+            <div class="player-artist">PROHLIS Disco</div>
+          </div>
+          <button class="player-btn" id="play-btn" aria-label="Play">
+            <svg width="12" height="14" viewBox="0 0 12 14" fill="currentColor" aria-hidden="true"><polygon points="0,0 12,7 0,14"/></svg>
+          </button>
+        </div>
+        <div class="player-progress">
+          <span class="player-time" id="player-time">0:00</span>
+          <div class="player-track" id="player-track">
+            <div class="player-fill" id="player-fill"></div>
+          </div>
+          <span class="player-duration" id="player-dur">0:00</span>
+        </div>
+      </div>
+    </nav>
+
+    <main>
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+
+  <!-- Docked player (mobile only) -->
+  <div class="docked-player" aria-hidden="true">
+    <div class="docked-progress" id="docked-progress"></div>
+    <div class="player-cover"></div>
+    <div class="player-info">
+      <div class="player-title">Irregular Resignation</div>
+      <div class="player-artist">PROHLIS Disco</div>
+    </div>
+    <button class="player-btn" onclick="document.getElementById('play-btn').click()" aria-label="Play/Pause">
+      <svg width="12" height="14" viewBox="0 0 12 14" fill="currentColor" aria-hidden="true"><polygon points="0,0 12,7 0,14"/></svg>
+    </button>
+  </div>
+
+  <audio id="audio" preload="metadata" src="/media/PROHLIS-Disco-01_01-08-2017-Irregular-Resignation.mp3"></audio>
+  <script src="/static/app.js"></script>
+</body>
+</html>
