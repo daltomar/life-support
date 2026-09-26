@@ -159,6 +159,12 @@ nav {
   transition: color 0.15s;
 }
 
+.nav-list.font-display a {
+  font-weight: 400;
+  font-stretch: normal;
+  font-synthesis: none;
+}
+
 .nav-list a:hover {
   color: var(--text);
 }
