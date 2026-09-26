@@ -1,10 +1,15 @@
 mod catalog;
 mod handlers;
 
-use axum::{routing::get, Router};
+use axum::{
+    http::{header, HeaderValue},
+    routing::get,
+    Router,
+};
 use catalog::Catalog;
 use std::sync::Arc;
-use tower_http::services::ServeDir;
+use tower::ServiceBuilder;
+use tower_http::{services::ServeDir, set_header::SetResponseHeaderLayer};
 
 #[tokio::main]
 async fn main() {
@@ -25,10 +30,25 @@ async fn main() {
         Arc::new(Catalog::default())
     });
 
+    let fonts_dir = std::path::Path::new(&static_dir).join("fonts");
+    if !fonts_dir.exists() {
+        eprintln!(
+            "warning: fonts directory '{}' does not exist",
+            fonts_dir.display()
+        );
+    }
+    let font_service = ServiceBuilder::new()
+        .layer(SetResponseHeaderLayer::overriding(
+            header::CACHE_CONTROL,
+            HeaderValue::from_static("public, max-age=31536000, immutable"),
+        ))
+        .service(ServeDir::new(&fonts_dir));
+
     let app = Router::new()
         .route("/", get(handlers::releases))
         .route("/releases", get(handlers::releases))
         .route("/artists", get(handlers::artists))
+        .nest_service("/static/fonts", font_service)
         .nest_service("/media", ServeDir::new(&media_dir))
         .nest_service("/static", ServeDir::new(&static_dir))
         .with_state(catalog);
