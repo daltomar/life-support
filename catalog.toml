@@ -13,7 +13,7 @@ catalog_num = "LSR002"
 date        = "2024-08-01"
 format      = "Digital"
 description = "For the second time, irregular rhythms and unresolved endings."
-cover       = ""
+cover       = "digital-labyrinth.webp"
 
 [[releases]]
 slug        = "disco-01"
@@ -23,7 +23,7 @@ catalog_num = "LSR001"
 date        = "2020-08-01"
 format      = "Digital"
 description = "A time of irregular rhythms and unresolved endings."
-cover       = ""
+cover       = "labrynth-of-prohlis.webp"
 
   [[releases.tracks]]
   title = "Irregular Resignation"
