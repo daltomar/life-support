@@ -105,11 +105,12 @@ header {
   font-synthesis: none;
   letter-spacing: 0.02em;
   line-height: 1;
+  color: var(--accent);
 }
 
 .wordmark-name {
-  font-size: 34px;
-  color: var(--text);
+  font-size: 36px;
+  color: var(--accent);
 }
 
 .wordmark-slogan {
@@ -170,7 +171,7 @@ nav {
 }
 
 .nav-list a[aria-current="page"] {
-  color: var(--text);
+  color: var(--accent);
 }
 
 .nav-num {
@@ -319,7 +320,7 @@ main {
 }
 
 main h1 {
-  font-size: 60px;
+  font-size: 34px;
   font-weight: 800;
   font-stretch: 70%;
   text-transform: uppercase;
