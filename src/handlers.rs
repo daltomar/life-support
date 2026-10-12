@@ -1,4 +1,5 @@
 use crate::catalog::{format_date, tracks_json, Catalog};
+use crate::cover_colors::CoverPalette;
 use askama::Template;
 use axum::{extract::{Path, State}, http::StatusCode, response::Html};
 use std::sync::Arc;
@@ -284,6 +285,7 @@ struct ReleaseTemplate {
     artist_slug: String,
     tracks: Vec<ReleaseTrack>,
     tracks_json: String,
+    palette: Option<CoverPalette>,
 }
 
 pub async fn release(
@@ -315,6 +317,7 @@ pub async fn release(
         artist_slug: r.artist.clone(),
         tracks,
         tracks_json: tracks_json(&r.tracks),
+        palette: r.palette.clone(),
     }
     .render()
     .map(Html)
