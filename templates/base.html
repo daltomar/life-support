@@ -81,7 +81,7 @@
       </div>
     </nav>
 
-    <main>
+    <main class="{% block main_class %}{% endblock %}"{% block main_style %}{% endblock %}>
       {% block content %}{% endblock %}
     </main>
   </div>

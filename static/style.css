@@ -754,6 +754,32 @@ a.catalog-artist:hover {
   max-width: 480px;
 }
 
+/* ── Release page: per-cover accent ── */
+/* --release-accent is set as an inline style on <main> when a palette
+   was extracted. The main.release-page rule provides the fallback so
+   releases without a palette look identical to today. */
+main.release-page {
+  --release-accent: var(--text);        /* fallback = current heading color */
+  --release-accent-muted: var(--line);  /* fallback = current divider color */
+}
+
+.release-page .release-detail-eyebrow {
+  color: var(--release-accent);
+}
+
+.release-page .release-detail-title {
+  color: var(--release-accent);
+}
+
+.release-page .release-detail-artist a:hover {
+  color: var(--release-accent);
+}
+
+.release-page .btn-play-release {
+  background: var(--release-accent);
+  color: var(--frame);
+}
+
 /* ── Tracklist ── */
 .track-row {
   display: grid;
