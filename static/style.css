@@ -90,6 +90,8 @@ header {
   height: 48px;
   background: var(--tile);
   flex-shrink: 0;
+  order: 10;
+  margin-left: auto;
 }
 
 .wordmark {
@@ -823,8 +825,7 @@ main.release-page {
   }
 
   .logo-slot {
-    width: 36px;
-    height: 36px;
+    display: none;
   }
 
   .wordmark-name {
