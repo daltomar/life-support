@@ -4,8 +4,10 @@ use std::path::Path;
 /// Page background colour (CSS `--panel: #1A1917`).
 const BG: [u8; 3] = [0x1A, 0x19, 0x17];
 
-/// Minimum mean Lab chroma for an image to be considered chromatic.
-const CHROMA_THRESHOLD: f32 = 8.0;
+/// A pixel is considered chromatic if its Lab chroma exceeds this value.
+const MIN_CHROMA: f32 = 5.0;
+/// If fewer than this fraction of pixels are chromatic, return None.
+const MIN_CHROMATIC_FRACTION: f32 = 0.02;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct CoverPalette {
@@ -34,13 +36,16 @@ pub fn extract_palette(path: &Path) -> Result<Option<CoverPalette>, String> {
         })
         .collect();
 
-    let mean_chroma: f32 = pixels
+    // Collect chromatic pixels — those with meaningful saturation.
+    // Dark-saturated colors (L < 15 but high chroma) are valid and must not
+    // be excluded here; contrast_adjust will lighten them for readability.
+    let chromatic: Vec<Lab> = pixels
         .iter()
-        .map(|lab| chroma(*lab))
-        .sum::<f32>()
-        / pixels.len() as f32;
+        .copied()
+        .filter(|lab| chroma(*lab) > MIN_CHROMA)
+        .collect();
 
-    if mean_chroma < CHROMA_THRESHOLD {
+    if (chromatic.len() as f32) < (pixels.len() as f32 * MIN_CHROMATIC_FRACTION) {
         return Ok(None);
     }
 
@@ -49,11 +54,8 @@ pub fn extract_palette(path: &Path) -> Result<Option<CoverPalette>, String> {
     let mut bin_sum: [Lab; 36] = [Lab::new(0.0f32, 0.0, 0.0); 36];
     let mut bin_count = [0u32; 36];
 
-    for lab in &pixels {
+    for lab in &chromatic {
         let c = chroma(*lab);
-        if c < CHROMA_THRESHOLD {
-            continue;
-        }
         let hue_deg = lab.b.atan2(lab.a).to_degrees().rem_euclid(360.0);
         let idx = (hue_deg / 10.0) as usize % 36;
         bins[idx] += c;
