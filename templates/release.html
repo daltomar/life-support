@@ -25,6 +25,8 @@
     <div class="featured-actions" style="margin-top: 20px;">
       <button class="btn-play-release"
               data-tracks="{{ tracks_json }}"
+              data-artist="{{ artist_name }}"
+              data-cover="{% if let Some(img) = cover %}/media/covers/{{ img }}{% endif %}"
               onclick="loadRelease(this)"
               aria-label="Play {{ title }}">
         <svg width="10" height="12" viewBox="0 0 10 12" fill="currentColor" aria-hidden="true"><polygon points="0,0 10,6 0,12"/></svg>
@@ -49,6 +51,7 @@
           data-file="{{ track.file }}"
           data-title="{{ track.title }}"
           data-artist="{{ artist_name }}"
+          data-cover="{% if let Some(img) = cover %}/media/covers/{{ img }}{% endif %}"
           aria-label="Play {{ track.title }}">
     <svg width="10" height="12" viewBox="0 0 10 12" fill="currentColor" aria-hidden="true"><polygon points="0,0 10,6 0,12"/></svg>
   </button>

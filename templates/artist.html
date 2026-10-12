@@ -43,6 +43,8 @@
   {% if r.has_tracks %}
   <button class="btn-play-row"
           data-tracks="{{ r.tracks_json }}"
+          data-artist="{{ name }}"
+          data-cover="{% if let Some(img) = r.cover %}/media/covers/{{ img }}{% endif %}"
           onclick="loadRelease(this)"
           aria-label="Play {{ r.title }}">
     <svg width="10" height="12" viewBox="0 0 10 12" fill="currentColor" aria-hidden="true"><polygon points="0,0 10,6 0,12"/></svg>
