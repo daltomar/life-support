@@ -1,4 +1,5 @@
 mod catalog;
+mod cover_colors;
 mod handlers;
 
 use axum::{
