@@ -1,0 +1,79 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: #000;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: monospace;
+}
+
+.player {
+  width: 280px;
+  border: 1px solid #39FF14;
+  padding: 18px 20px 16px;
+  box-shadow: 0 0 24px rgba(57,255,20,.08);
+}
+
+.track-title {
+  color: #39FF14;
+  font-size: 11px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  line-height: 1.5;
+  margin-bottom: 4px;
+}
+
+.track-meta {
+  color: rgba(57,255,20,.45);
+  font-size: 9px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border: 1px solid #39FF14;
+  background: none;
+  color: #39FF14;
+  cursor: pointer;
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background .1s, color .1s;
+}
+.btn:hover { background: #39FF14; color: #000; }
+
+.scrubber {
+  flex: 1;
+  height: 2px;
+  background: #1c1c1c;
+  cursor: pointer;
+  position: relative;
+}
+.scrubber-fill {
+  height: 100%;
+  background: #39FF14;
+  width: 0%;
+  pointer-events: none;
+}
+
+.time {
+  flex-shrink: 0;
+  color: rgba(57,255,20,.7);
+  font-size: 9px;
+  letter-spacing: .05em;
+  min-width: 32px;
+  text-align: right;
+}
