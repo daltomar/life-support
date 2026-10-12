@@ -61,12 +61,18 @@
     </div>
     <a class="catalog-artist" href="/artists/{{ row.artist_slug }}">{{ row.artist_name }}</a>
     <span class="catalog-meta">{{ row.date }} · {{ row.format }}</span>
+    {% if row.has_tracks %}
     <button class="btn-play-row"
-            data-tracks="{{ row.slug }}"
+            data-tracks="{{ row.tracks_json }}"
             onclick="loadRelease(this)"
             aria-label="Play {{ row.title }}">
       <svg width="10" height="12" viewBox="0 0 10 12" fill="currentColor" aria-hidden="true"><polygon points="0,0 10,6 0,12"/></svg>
     </button>
+    {% else %}
+    <span class="btn-play-row" aria-hidden="true" style="opacity:0.2;cursor:default;">
+      <svg width="10" height="12" viewBox="0 0 10 12" fill="currentColor"><polygon points="0,0 10,6 0,12"/></svg>
+    </span>
+    {% endif %}
   </div>
   {% endfor %}
 </section>

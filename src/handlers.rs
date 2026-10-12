@@ -1,6 +1,6 @@
 use crate::catalog::{format_date, tracks_json, Catalog};
 use askama::Template;
-use axum::{extract::State, http::StatusCode, response::Html};
+use axum::{extract::{Path, State}, http::StatusCode, response::Html};
 use std::sync::Arc;
 
 #[allow(dead_code)]
@@ -53,6 +53,8 @@ pub struct CatalogRow {
     pub format: String,
     pub artist_name: String,
     pub artist_slug: String,
+    pub has_tracks: bool,
+    pub tracks_json: String,
 }
 
 #[derive(Template)]
@@ -96,6 +98,8 @@ pub async fn releases(State(catalog): State<Arc<Catalog>>) -> Result<Html<String
                 format: r.format.clone(),
                 artist_name,
                 artist_slug: r.artist.clone(),
+                has_tracks: !r.tracks.is_empty(),
+                tracks_json: tracks_json(&r.tracks),
             }
         })
         .collect();
@@ -196,4 +200,126 @@ pub async fn zero() -> Result<Html<String>, StatusCode> {
             eprintln!("template render error: {e}");
             StatusCode::INTERNAL_SERVER_ERROR
         })
+}
+
+// ── Artist detail page ─────────────────────────────────────
+
+pub struct ArtistRelease {
+    pub slug: String,
+    pub title: String,
+    pub catalog_num: String,
+    pub date: String,
+    pub format: String,
+    pub cover: Option<String>,
+    pub has_tracks: bool,
+    pub tracks_json: String,
+}
+
+#[derive(Template)]
+#[template(path = "artist.html")]
+struct ArtistTemplate {
+    active_nav: NavTab,
+    name: String,
+    city: String,
+    portrait: Option<String>,
+    bio: String,
+    releases: Vec<ArtistRelease>,
+}
+
+pub async fn artist(
+    State(catalog): State<Arc<Catalog>>,
+    Path(slug): Path<String>,
+) -> Result<Html<String>, StatusCode> {
+    let a = catalog.artist_by_slug(&slug).ok_or(StatusCode::NOT_FOUND)?;
+    let releases = catalog
+        .releases_for(&slug)
+        .into_iter()
+        .map(|r| ArtistRelease {
+            slug: r.slug.clone(),
+            title: r.title.clone(),
+            catalog_num: r.catalog_num.clone(),
+            date: format_date(&r.date),
+            format: r.format.clone(),
+            cover: r.cover.as_ref().filter(|s| !s.is_empty()).cloned(),
+            has_tracks: !r.tracks.is_empty(),
+            tracks_json: tracks_json(&r.tracks),
+        })
+        .collect();
+
+    ArtistTemplate {
+        active_nav: NavTab::Artists,
+        name: a.name.clone(),
+        city: a.city.clone(),
+        portrait: a.portrait.as_ref().filter(|s| !s.is_empty()).cloned(),
+        bio: a.bio.clone(),
+        releases,
+    }
+    .render()
+    .map(Html)
+    .map_err(|e| {
+        eprintln!("template render error: {e}");
+        StatusCode::INTERNAL_SERVER_ERROR
+    })
+}
+
+// ── Release detail page ────────────────────────────────────
+
+pub struct ReleaseTrack {
+    pub number: usize,
+    pub title: String,
+    pub file: String,
+}
+
+#[derive(Template)]
+#[template(path = "release.html")]
+struct ReleaseTemplate {
+    active_nav: NavTab,
+    title: String,
+    catalog_num: String,
+    date: String,
+    format: String,
+    description: String,
+    cover: Option<String>,
+    artist_name: String,
+    artist_slug: String,
+    tracks: Vec<ReleaseTrack>,
+    tracks_json: String,
+}
+
+pub async fn release(
+    State(catalog): State<Arc<Catalog>>,
+    Path(slug): Path<String>,
+) -> Result<Html<String>, StatusCode> {
+    let r = catalog.release_by_slug(&slug).ok_or(StatusCode::NOT_FOUND)?;
+    let artist_name = resolve_artist(&catalog, &r.artist);
+    let tracks = r
+        .tracks
+        .iter()
+        .enumerate()
+        .map(|(i, t)| ReleaseTrack {
+            number: i + 1,
+            title: t.title.clone(),
+            file: t.file.clone(),
+        })
+        .collect();
+
+    ReleaseTemplate {
+        active_nav: NavTab::Releases,
+        title: r.title.clone(),
+        catalog_num: r.catalog_num.clone(),
+        date: format_date(&r.date),
+        format: r.format.clone(),
+        description: r.description.clone().unwrap_or_default(),
+        cover: r.cover.as_ref().filter(|s| !s.is_empty()).cloned(),
+        artist_name,
+        artist_slug: r.artist.clone(),
+        tracks,
+        tracks_json: tracks_json(&r.tracks),
+    }
+    .render()
+    .map(Html)
+    .map_err(|e| {
+        eprintln!("template render error: {e}");
+        StatusCode::INTERNAL_SERVER_ERROR
+    })
 }

@@ -27,6 +27,8 @@ pub struct Artist {
     pub name: String,
     pub city: String,
     pub portrait: Option<String>,
+    #[serde(default)]
+    pub bio: String,
 }
 
 #[derive(Deserialize)]
@@ -58,11 +60,19 @@ impl Catalog {
         self.artists.iter().find(|a| a.slug == slug)
     }
 
-    pub fn release_count_for(&self, artist_slug: &str) -> usize {
+    pub fn release_by_slug(&self, slug: &str) -> Option<&Release> {
+        self.releases.iter().find(|r| r.slug == slug)
+    }
+
+    pub fn releases_for(&self, artist_slug: &str) -> Vec<&Release> {
         self.releases
             .iter()
             .filter(|r| r.artist == artist_slug)
-            .count()
+            .collect()
+    }
+
+    pub fn release_count_for(&self, artist_slug: &str) -> usize {
+        self.releases_for(artist_slug).len()
     }
 }
 

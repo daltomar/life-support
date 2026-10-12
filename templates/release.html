@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }} — Life Support Records{% endblock %}
+
+{% block content %}
+<div class="release-detail-header">
+  <div class="release-detail-cover">
+    {% if let Some(img) = cover %}
+    <img src="/media/covers/{{ img }}" alt="{{ title }} cover">
+    {% else %}
+    <span class="cover-placeholder-label">[COVER]</span>
+    {% endif %}
+  </div>
+  <div class="release-detail-info">
+    <span class="mono-label release-detail-eyebrow">{{ catalog_num }}</span>
+    <h1 class="font-display release-detail-title">{{ title }}</h1>
+    <p class="release-detail-artist">
+      <a href="/artists/{{ artist_slug }}">{{ artist_name }}</a>
+    </p>
+    <p class="release-detail-meta mono-label">{{ date }} · {{ format }}</p>
+    {% if !description.is_empty() %}
+    <p class="release-detail-desc">{{ description }}</p>
+    {% endif %}
+    {% if !tracks.is_empty() %}
+    <div class="featured-actions" style="margin-top: 20px;">
+      <button class="btn-play-release"
+              data-tracks="{{ tracks_json }}"
+              onclick="loadRelease(this)"
+              aria-label="Play {{ title }}">
+        <svg width="10" height="12" viewBox="0 0 10 12" fill="currentColor" aria-hidden="true"><polygon points="0,0 10,6 0,12"/></svg>
+        Play release
+      </button>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+{% if !tracks.is_empty() %}
+<div class="catalog-header" style="margin-top: 48px;">
+  <span class="mono-label">TRACKLIST</span>
+  <div class="catalog-rule" aria-hidden="true"></div>
+</div>
+{% for track in tracks %}
+<div class="track-row">
+  <span class="track-num mono-label">{{ track.number }}</span>
+  <span class="track-title">{{ track.title }}</span>
+  <button class="btn-play-row"
+          onclick="loadTrack(this)"
+          data-file="{{ track.file }}"
+          data-title="{{ track.title }}"
+          data-artist="{{ artist_name }}"
+          aria-label="Play {{ track.title }}">
+    <svg width="10" height="12" viewBox="0 0 10 12" fill="currentColor" aria-hidden="true"><polygon points="0,0 10,6 0,12"/></svg>
+  </button>
+</div>
+{% endfor %}
+{% endif %}
+{% endblock %}

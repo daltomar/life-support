@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}{{ name }} — Life Support Records{% endblock %}
+
+{% block content %}
+<div class="artist-detail">
+  <div class="artist-detail-portrait">
+    {% if let Some(img) = portrait %}
+    <img src="/media/portraits/{{ img }}" alt="{{ name }} portrait">
+    {% else %}
+    <span class="cover-placeholder-label portrait-placeholder-label">[PORTRAIT]</span>
+    {% endif %}
+  </div>
+  <div class="artist-detail-info">
+    <h1 class="font-display">{{ name }}</h1>
+    <p class="artist-detail-city mono-label">{{ city }}</p>
+    {% if !bio.is_empty() %}
+    <p class="artist-detail-bio">{{ bio }}</p>
+    {% endif %}
+  </div>
+</div>
+
+{% if !releases.is_empty() %}
+<div class="catalog-header" style="margin-top: 48px;">
+  <span class="mono-label">RELEASES</span>
+  <div class="catalog-rule" aria-hidden="true"></div>
+</div>
+{% for r in releases %}
+<div class="catalog-row">
+  <span class="catalog-num">{{ r.catalog_num }}</span>
+  <div class="catalog-cover">
+    {% if let Some(img) = r.cover %}
+    <img src="/media/covers/{{ img }}" alt="{{ r.title }} cover">
+    {% else %}
+    <span class="cover-placeholder-label">[COVER]</span>
+    {% endif %}
+  </div>
+  <div class="catalog-title-col">
+    <a href="/releases/{{ r.slug }}">{{ r.title }}</a>
+    <span class="m-date">{{ r.date }} · {{ r.format }}</span>
+  </div>
+  <span class="catalog-meta">{{ r.date }} · {{ r.format }}</span>
+  {% if r.has_tracks %}
+  <button class="btn-play-row"
+          data-tracks="{{ r.tracks_json }}"
+          onclick="loadRelease(this)"
+          aria-label="Play {{ r.title }}">
+    <svg width="10" height="12" viewBox="0 0 10 12" fill="currentColor" aria-hidden="true"><polygon points="0,0 10,6 0,12"/></svg>
+  </button>
+  {% else %}
+  <span class="btn-play-row" aria-hidden="true" style="opacity:0.2;cursor:default;">
+    <svg width="10" height="12" viewBox="0 0 10 12" fill="currentColor"><polygon points="0,0 10,6 0,12"/></svg>
+  </span>
+  {% endif %}
+</div>
+{% endfor %}
+{% endif %}
+{% endblock %}
