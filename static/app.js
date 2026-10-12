@@ -64,11 +64,16 @@ if (track) {
 }
 
 // ── Player info update ───────────────────────────────────
-function updatePlayerInfo(title, artist) {
-  const titleEl = document.querySelector('.player-title');
-  const artistEl = document.querySelector('.player-artist');
-  if (titleEl) titleEl.textContent = title;
-  if (artistEl) artistEl.textContent = artist;
+function updatePlayerInfo(title, artist, cover) {
+  document.querySelectorAll('.player-title').forEach(el => el.textContent = title);
+  document.querySelectorAll('.player-artist').forEach(el => el.textContent = artist);
+  document.querySelectorAll('.player-cover').forEach(el => {
+    if (cover) {
+      el.innerHTML = '<img src="' + cover + '" alt="">';
+    } else {
+      el.innerHTML = '';
+    }
+  });
 }
 
 // ── Load a release into the player ──────────────────────
@@ -81,7 +86,7 @@ window.loadRelease = function(btn) {
   const t = tracks[0];
   audio.src = '/media/' + t.file;
   audio.play().catch(() => {});
-  updatePlayerInfo(t.title, btn.dataset.artist || '');
+  updatePlayerInfo(t.title, btn.dataset.artist || '', btn.dataset.cover || '');
 };
 
 // ── Load a single track into the player ─────────────────
@@ -89,10 +94,11 @@ window.loadTrack = function(btn) {
   const file   = btn.dataset.file;
   const title  = btn.dataset.title  || '';
   const artist = btn.dataset.artist || '';
+  const cover  = btn.dataset.cover  || '';
   if (!file) return;
   audio.src = '/media/' + file;
   audio.play().catch(() => {});
-  updatePlayerInfo(title, artist);
+  updatePlayerInfo(title, artist, cover);
 };
 
 // ── Nav swap (keep audio playing across pages) ──────────
