@@ -5,6 +5,7 @@ use std::sync::Arc;
 
 #[allow(dead_code)]
 pub enum NavTab {
+    Zero,
     Releases,
     Artists,
     Listen,
@@ -16,6 +17,7 @@ pub enum NavTab {
 impl NavTab {
     pub fn as_str(&self) -> &'static str {
         match self {
+            Self::Zero    => "zero",
             Self::Releases => "releases",
             Self::Artists => "artists",
             Self::Listen => "listen",
@@ -176,4 +178,22 @@ fn resolve_artist(catalog: &Catalog, slug: &str) -> String {
             String::new()
         }
     }
+}
+
+// ── Zero page ──────────────────────────────────────────────────────────────
+
+#[derive(Template)]
+#[template(path = "zero.html")]
+struct ZeroTemplate {
+    active_nav: NavTab,
+}
+
+pub async fn zero() -> Result<Html<String>, StatusCode> {
+    ZeroTemplate { active_nav: NavTab::Zero }
+        .render()
+        .map(Html)
+        .map_err(|e| {
+            eprintln!("template render error: {e}");
+            StatusCode::INTERNAL_SERVER_ERROR
+        })
 }
