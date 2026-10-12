@@ -46,6 +46,7 @@ async fn main() {
 
     let app = Router::new()
         .route("/", get(handlers::releases))
+        .route("/zero", get(handlers::zero))
         .route("/releases", get(handlers::releases))
         .route("/artists", get(handlers::artists))
         .nest_service("/static/fonts", font_service)

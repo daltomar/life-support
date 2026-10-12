@@ -29,6 +29,13 @@
         <div class="nav-label">SIDE A</div>
         <ul class="nav-list font-display">
           <li>
+            <a href="/zero" {% if active_nav.as_str() == "zero" %}aria-current="page"{% endif %}>
+              <span class="nav-num">00</span>
+              <span class="nav-label-text">Zero</span>
+              <span class="nav-dot" aria-hidden="true"></span>
+            </a>
+          </li>
+          <li>
             <a href="/releases" {% if active_nav.as_str() == "releases" %}aria-current="page"{% endif %}>
               <span class="nav-num">01</span>
               <span class="nav-label-text">Releases</span>
