@@ -105,7 +105,11 @@ header {
   font-synthesis: none;
   letter-spacing: 0.02em;
   line-height: 1;
-  color: var(--accent);
+  color: var(--text);
+}
+
+main .font-display {
+  text-align: center;
 }
 
 .wordmark-name {
@@ -394,7 +398,7 @@ main h1 {
 }
 
 .featured-eyebrow {
-  color: var(--accent);
+  color: var(--text);
 }
 
 .featured-title {
@@ -440,7 +444,7 @@ main h1 {
 .btn-play-release {
   height: 44px;
   padding: 0 22px;
-  background: var(--accent);
+  background: var(--text);
   color: var(--frame);
   border: none;
   font-family: 'Archivo', 'Helvetica Neue', Helvetica, sans-serif;
@@ -725,7 +729,7 @@ a.catalog-artist:hover {
 }
 
 .release-detail-eyebrow {
-  color: var(--accent);
+  color: var(--text);
 }
 
 .release-detail-title {
