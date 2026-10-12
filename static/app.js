@@ -63,6 +63,14 @@ if (track) {
   });
 }
 
+// ── Player info update ───────────────────────────────────
+function updatePlayerInfo(title, artist) {
+  const titleEl = document.querySelector('.player-title');
+  const artistEl = document.querySelector('.player-artist');
+  if (titleEl) titleEl.textContent = title;
+  if (artistEl) artistEl.textContent = artist;
+}
+
 // ── Load a release into the player ──────────────────────
 window.loadRelease = function(btn) {
   const json = btn.dataset.tracks;
@@ -73,8 +81,18 @@ window.loadRelease = function(btn) {
   const t = tracks[0];
   audio.src = '/media/' + t.file;
   audio.play().catch(() => {});
-  const titleEl = document.querySelector('.player-title');
-  if (titleEl) titleEl.textContent = t.title;
+  updatePlayerInfo(t.title, btn.dataset.artist || '');
+};
+
+// ── Load a single track into the player ─────────────────
+window.loadTrack = function(btn) {
+  const file   = btn.dataset.file;
+  const title  = btn.dataset.title  || '';
+  const artist = btn.dataset.artist || '';
+  if (!file) return;
+  audio.src = '/media/' + file;
+  audio.play().catch(() => {});
+  updatePlayerInfo(title, artist);
 };
 
 // ── Nav swap (keep audio playing across pages) ──────────
