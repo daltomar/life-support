@@ -104,10 +104,6 @@ header {
   color: var(--text);
 }
 
-main .font-display {
-  text-align: center;
-}
-
 main h1.font-display {
   font-family: 'Archivo', 'Helvetica Neue', Helvetica, sans-serif;
   font-weight: 800;
