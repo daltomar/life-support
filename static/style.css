@@ -82,22 +82,15 @@ header {
   grid-column: 1 / 3;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 20px;
   padding: 0 32px;
-}
-
-.logo-slot {
-  width: 48px;
-  height: 48px;
-  background: var(--tile);
-  flex-shrink: 0;
-  order: 10;
-  margin-left: auto;
 }
 
 .wordmark {
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 4px;
 }
 
@@ -113,6 +106,12 @@ header {
 
 main .font-display {
   text-align: center;
+}
+
+main h1.font-display {
+  font-family: 'Archivo', 'Helvetica Neue', Helvetica, sans-serif;
+  font-weight: 800;
+  font-stretch: 70%;
 }
 
 .wordmark-name {
@@ -813,10 +812,6 @@ a.catalog-artist:hover {
     height: 68px;
     padding: 0 20px;
     flex-shrink: 0;
-  }
-
-  .logo-slot {
-    display: none;
   }
 
   .wordmark-name {
