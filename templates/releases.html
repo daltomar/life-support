@@ -6,7 +6,7 @@
 <h1 class="font-display">Releases</h1>
 
 {% if let Some(f) = featured %}
-<section aria-label="Latest release">
+<section aria-label="Latest release"{% if let Some(accent) = f.accent.as_deref() %} style="--accent: {{ accent }}"{% endif %}>
   <div class="featured-release">
     <div class="featured-cover">
       {% if let Some(img) = f.cover %}

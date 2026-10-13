@@ -32,13 +32,14 @@
 }
 
 :root {
-  --frame:  #0E0D0C;
-  --panel:  #1A1917;
-  --tile:   #262422;
-  --line:   #2A2825;
-  --text:   #ECE7DF;
-  --muted:  #9C958A;
-  --dim:    #8A8378;
+  --frame:  #0C0C0C;
+  --panel:  #171717;
+  --tile:   #222222;
+  --line:   #272727;
+  --text:   #E8E8E6;
+  --muted:  #9A9A97;
+  --dim:    #878784;
+  --border: #474747;
   --accent: #39FF14;
   --font-display: 'Creepster', 'Archivo', Impact, sans-serif;
 }
@@ -81,20 +82,15 @@ header {
   grid-column: 1 / 3;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 20px;
   padding: 0 32px;
-}
-
-.logo-slot {
-  width: 48px;
-  height: 48px;
-  background: var(--tile);
-  flex-shrink: 0;
 }
 
 .wordmark {
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 4px;
 }
 
@@ -105,7 +101,13 @@ header {
   font-synthesis: none;
   letter-spacing: 0.02em;
   line-height: 1;
-  color: var(--accent);
+  color: var(--text);
+}
+
+main h1.font-display {
+  font-family: 'Archivo', 'Helvetica Neue', Helvetica, sans-serif;
+  font-weight: 800;
+  font-stretch: 70%;
 }
 
 .wordmark-name {
@@ -440,9 +442,9 @@ main h1 {
 .btn-play-release {
   height: 44px;
   padding: 0 22px;
-  background: var(--accent);
-  color: var(--frame);
-  border: none;
+  background: transparent;
+  color: var(--accent);
+  border: 1px solid var(--accent);
   font-family: 'Archivo', 'Helvetica Neue', Helvetica, sans-serif;
   font-size: 14px;
   font-weight: 700;
@@ -452,11 +454,12 @@ main h1 {
   display: flex;
   align-items: center;
   gap: 8px;
-  transition: opacity 0.15s;
+  transition: background 0.15s, color 0.15s;
 }
 
 .btn-play-release:hover {
-  opacity: 0.85;
+  background: var(--accent);
+  color: var(--frame);
 }
 
 .btn-view-release {
@@ -464,7 +467,7 @@ main h1 {
   padding: 0 22px;
   background: none;
   color: var(--text);
-  border: 1px solid #4A4640;
+  border: 1px solid var(--border);
   font-size: 14px;
   font-weight: 700;
   text-transform: uppercase;
@@ -570,7 +573,7 @@ a.catalog-artist:hover {
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  border: 1px solid #4A4640;
+  border: 1px solid var(--border);
   background: none;
   color: var(--text);
   cursor: pointer;
@@ -725,7 +728,7 @@ a.catalog-artist:hover {
 }
 
 .release-detail-eyebrow {
-  color: var(--accent);
+  color: var(--text);
 }
 
 .release-detail-title {
@@ -752,6 +755,21 @@ a.catalog-artist:hover {
   line-height: 1.6;
   color: var(--muted);
   max-width: 480px;
+}
+
+/* ── Release page: per-cover accent ── */
+/* --accent is overridden via inline style on <main> when a palette is
+   available. Without it the element inherits the global green from :root. */
+.release-page .release-detail-eyebrow {
+  color: var(--accent);
+}
+
+.release-page .release-detail-title {
+  color: var(--accent);
+}
+
+.release-page .release-detail-artist a:hover {
+  color: var(--accent);
 }
 
 /* ── Tracklist ── */
@@ -790,11 +808,6 @@ a.catalog-artist:hover {
     height: 68px;
     padding: 0 20px;
     flex-shrink: 0;
-  }
-
-  .logo-slot {
-    width: 36px;
-    height: 36px;
   }
 
   .wordmark-name {

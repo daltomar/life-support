@@ -1,4 +1,5 @@
 mod catalog;
+mod cover_colors;
 mod handlers;
 
 use axum::{
@@ -25,10 +26,20 @@ async fn main() {
         eprintln!("warning: STATIC_DIR '{static_dir}' does not exist");
     }
 
-    let catalog: Arc<Catalog> = Catalog::load(&catalog_file).unwrap_or_else(|e| {
+    let catalog_raw = Catalog::load(&catalog_file).unwrap_or_else(|e| {
         eprintln!("warning: failed to load '{catalog_file}': {e}");
-        Arc::new(Catalog::default())
+        Catalog::default()
     });
+    let media_dir_clone = media_dir.clone();
+    let catalog_with_palettes = tokio::task::spawn_blocking(move || {
+        catalog_raw.with_palettes(&media_dir_clone)
+    })
+    .await
+    .unwrap_or_else(|e| {
+        eprintln!("warning: palette extraction panicked: {e}");
+        Catalog::default()
+    });
+    let catalog = Arc::new(catalog_with_palettes);
 
     let fonts_dir = std::path::Path::new(&static_dir).join("fonts");
     if !fonts_dir.exists() {

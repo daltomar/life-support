@@ -1,7 +1,9 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  background: #000;
+  background: var(--frame);
+  overflow: auto;
+  height: auto;
   min-height: 100vh;
   display: flex;
   align-items: center;
@@ -11,13 +13,13 @@ body {
 
 .player {
   width: 280px;
-  border: 1px solid #39FF14;
+  border: 1px solid var(--accent);
   padding: 18px 20px 16px;
-  box-shadow: 0 0 24px rgba(57,255,20,.08);
+  box-shadow: 0 0 24px color-mix(in srgb, var(--accent) 8%, transparent);
 }
 
 .track-title {
-  color: #39FF14;
+  color: var(--accent);
   font-size: 11px;
   letter-spacing: .12em;
   text-transform: uppercase;
@@ -26,7 +28,7 @@ body {
 }
 
 .track-meta {
-  color: rgba(57,255,20,.45);
+  color: color-mix(in srgb, var(--accent) 45%, transparent);
   font-size: 9px;
   letter-spacing: .1em;
   text-transform: uppercase;
@@ -43,9 +45,9 @@ body {
   flex-shrink: 0;
   width: 28px;
   height: 28px;
-  border: 1px solid #39FF14;
+  border: 1px solid var(--accent);
   background: none;
-  color: #39FF14;
+  color: var(--accent);
   cursor: pointer;
   font-size: 10px;
   display: flex;
@@ -53,25 +55,25 @@ body {
   justify-content: center;
   transition: background .1s, color .1s;
 }
-.btn:hover { background: #39FF14; color: #000; }
+.btn:hover { background: var(--accent); color: var(--frame); }
 
 .scrubber {
   flex: 1;
   height: 2px;
-  background: #1c1c1c;
+  background: var(--line);
   cursor: pointer;
   position: relative;
 }
 .scrubber-fill {
   height: 100%;
-  background: #39FF14;
+  background: var(--accent);
   width: 0%;
   pointer-events: none;
 }
 
 .time {
   flex-shrink: 0;
-  color: rgba(57,255,20,.7);
+  color: color-mix(in srgb, var(--accent) 70%, transparent);
   font-size: 9px;
   letter-spacing: .05em;
   min-width: 32px;

@@ -12,7 +12,6 @@
 
   <div class="root">
     <header>
-      <div class="logo-slot" aria-hidden="true"></div>
       <div class="wordmark">
         <span class="wordmark-name font-display">LIFE SUPPORT RECORDS</span>
         <span class="wordmark-slogan">AMATEUR - DIY - INDEPENDENT - SLOPPY (sometimes)</span>
@@ -81,7 +80,7 @@
       </div>
     </nav>
 
-    <main>
+    <main class="{% block main_class %}{% endblock %}"{% block main_style %}{% endblock %}>
       {% block content %}{% endblock %}
     </main>
   </div>
