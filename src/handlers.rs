@@ -43,6 +43,7 @@ pub struct FeaturedView {
     pub artist_name: String,
     pub artist_slug: String,
     pub tracks_json: String,
+    pub accent: Option<String>,
 }
 
 pub struct CatalogRow {
@@ -83,6 +84,7 @@ pub async fn releases(State(catalog): State<Arc<Catalog>>) -> Result<Html<String
             artist_name,
             artist_slug: r.artist.clone(),
             tracks_json: tracks_json(&r.tracks),
+            accent: r.palette.as_ref().map(|p| p.accent.clone()),
         }
     });
 

@@ -19,7 +19,7 @@ pub struct Release {
     pub description: Option<String>,
     pub cover: Option<String>,
     #[serde(default)]
-    pub accent_color: Option<String>,
+    pub accent: Option<String>,
     #[serde(default)]
     pub tracks: Vec<Track>,
     #[serde(skip)]
@@ -73,7 +73,7 @@ impl Catalog {
             let path = covers_dir.join(cover_file);
 
             // Manual override: run contrast-adjust on the provided hex, skip extraction.
-            if let Some(ref override_hex) = release.accent_color.clone() {
+            if let Some(ref override_hex) = release.accent.clone() {
                 let accent = cover_colors::contrast_adjust(override_hex);
                 let accent_muted = derive_muted(&accent);
                 eprintln!("palette [{}]: accent={accent} (manual override)", release.slug);

@@ -14,6 +14,7 @@ date        = "2024-08-01"
 format      = "Digital"
 description = "For the second time, irregular rhythms and unresolved endings."
 cover       = "digital-labyrinth.webp"
+accent      = "#FF3344"
 
 [[releases]]
 slug        = "disco-01"

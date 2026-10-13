@@ -2,7 +2,7 @@
 
 {% block main_class %}release-page{% endblock %}
 
-{% block main_style %}{% if let Some(p) = palette %} style="--release-accent: {{ p.accent }}; --release-accent-muted: {{ p.accent_muted }}"{% endif %}{% endblock %}
+{% block main_style %}{% if let Some(p) = palette %} style="--accent: {{ p.accent }}"{% endif %}{% endblock %}
 
 {% block title %}{{ title }} — Life Support Records{% endblock %}
 
