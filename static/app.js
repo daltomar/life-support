@@ -84,7 +84,7 @@ window.loadRelease = function(btn) {
   try { tracks = JSON.parse(json); } catch(_) { return; }
   if (!tracks.length) return;
   const t = tracks[0];
-  audio.src = '/media/' + t.file;
+  audio.src = '/media/' + encodeURIComponent(t.file);
   audio.play().catch(() => {});
   updatePlayerInfo(t.title, btn.dataset.artist || '', btn.dataset.cover || '');
 };
@@ -96,7 +96,7 @@ window.loadTrack = function(btn) {
   const artist = btn.dataset.artist || '';
   const cover  = btn.dataset.cover  || '';
   if (!file) return;
-  audio.src = '/media/' + file;
+  audio.src = '/media/' + encodeURIComponent(file);
   audio.play().catch(() => {});
   updatePlayerInfo(title, artist, cover);
 };

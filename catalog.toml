@@ -16,6 +16,46 @@ description = "For the second time, irregular rhythms and unresolved endings."
 cover       = "digital-labyrinth.webp"
 accent      = "#FF3344"
 
+  [[releases.tracks]]
+  title = "Ilusoes Artificiais"
+  file  = "PRO-PROHLIS-Disco-02-Masterizadas-01. Ilusoes Artificiais.mp3"
+
+  [[releases.tracks]]
+  title = "Me Above God"
+  file  = "PRO-PROHLIS-Disco-02-Masterizadas-02. Me Above God.mp3"
+
+  [[releases.tracks]]
+  title = "Blind Trust"
+  file  = "PRO-PROHLIS-Disco-02-Masterizadas-03. Blind Trust.mp3"
+
+  [[releases.tracks]]
+  title = "Circus Maximus"
+  file  = "PRO-PROHLIS-Disco-02-Masterizadas-04. Circus Maximus.mp3"
+
+  [[releases.tracks]]
+  title = "Incognita"
+  file  = "PRO-PROHLIS-Disco-02-Masterizadas-05. Incognita.mp3"
+
+  [[releases.tracks]]
+  title = "Digital-Tribal"
+  file  = "PRO-PROHLIS-Disco-02-Masterizadas-06. Digital-Tribal.mp3"
+
+  [[releases.tracks]]
+  title = "Dance a danca"
+  file  = "PRO-PROHLIS-Disco-02-Masterizadas-07. Dance a danca.mp3"
+
+  [[releases.tracks]]
+  title = "Numbers Dictatorship"
+  file  = "PRO-PROHLIS-Disco-02-Masterizadas-08. Numbers Dictatorship.mp3"
+
+  [[releases.tracks]]
+  title = "Human-Machine"
+  file  = "PRO-PROHLIS-Disco-02-Masterizadas-09. Human-Machine.mp3"
+
+  [[releases.tracks]]
+  title = "Peace is forgotten for now"
+  file  = "PRO-PROHLIS-Disco-02-Masterizadas-10. Peace is forgotten for now.mp3"
+
 [[releases]]
 slug        = "disco-01"
 title       = "Labyrinth Of Prohlis"
@@ -27,5 +67,41 @@ description = "A time of irregular rhythms and unresolved endings."
 cover       = "labrynth-of-prohlis.webp"
 
   [[releases.tracks]]
+  title = "Labyrinth of Prohlis"
+  file  = "PRO-PROHLIS-Disco-01-Masterizadas-02-01. 200224_Labyrinth of Prohlis (final).mp3"
+
+  [[releases.tracks]]
+  title = "Prepare yourself for the fitlth"
+  file  = "PRO-PROHLIS-Disco-01-Masterizadas-02-02. 200224_Prepare yourself for the fitlth (final).mp3"
+
+  [[releases.tracks]]
+  title = "Einsames Kind"
+  file  = "PRO-PROHLIS-Disco-01-Masterizadas-02-03. 200224_Einsames Kind (final).mp3"
+
+  [[releases.tracks]]
+  title = "Kukloma"
+  file  = "PRO-PROHLIS-Disco-01-Masterizadas-02-04. 200129_Kukloma (final).mp3"
+
+  [[releases.tracks]]
+  title = "Skyglow"
+  file  = "PRO-PROHLIS-Disco-01-Masterizadas-02-05. 200217_Skyglow (final).mp3"
+
+  [[releases.tracks]]
+  title = "Darkness of Childhood"
+  file  = "PRO-PROHLIS-Disco-01-Masterizadas-02-06. 200205_Darkness of Childhood (final).mp3"
+
+  [[releases.tracks]]
+  title = "Bound of Two Worlds"
+  file  = "PRO-PROHLIS-Disco-01-Masterizadas-02-07. 200229_Bound of Two Worlds (final).mp3"
+
+  [[releases.tracks]]
   title = "Irregular Resignation"
-  file  = "PROHLIS-Disco-01_01-08-2017-Irregular-Resignation.mp3"
+  file  = "PRO-PROHLIS-Disco-01-Masterizadas-02-08. 200217_Irregular Resignation (final).mp3"
+
+  [[releases.tracks]]
+  title = "AMDP"
+  file  = "PRO-PROHLIS-Disco-01-Masterizadas-02-09. 200217_AMDP (final).mp3"
+
+  [[releases.tracks]]
+  title = "Depths of One's Psyche"
+  file  = "PRO-PROHLIS-Disco-01-Masterizadas-02-10. 200212_Depths of One's Psyche (final).mp3"
