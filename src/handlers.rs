@@ -6,7 +6,7 @@ use std::sync::Arc;
 
 #[allow(dead_code)]
 pub enum NavTab {
-    Zero,
+    Start,
     Releases,
     Artists,
     Listen,
@@ -18,7 +18,7 @@ pub enum NavTab {
 impl NavTab {
     pub fn as_str(&self) -> &'static str {
         match self {
-            Self::Zero    => "zero",
+            Self::Start   => "start",
             Self::Releases => "releases",
             Self::Artists => "artists",
             Self::Listen => "listen",
@@ -187,16 +187,16 @@ fn resolve_artist(catalog: &Catalog, slug: &str) -> String {
     }
 }
 
-// ── Zero page ──────────────────────────────────────────────────────────────
+// ── Start page ─────────────────────────────────────────────────────────────
 
 #[derive(Template)]
-#[template(path = "zero.html")]
-struct ZeroTemplate {
+#[template(path = "start.html")]
+struct StartTemplate {
     active_nav: NavTab,
 }
 
-pub async fn zero() -> Result<Html<String>, StatusCode> {
-    ZeroTemplate { active_nav: NavTab::Zero }
+pub async fn start() -> Result<Html<String>, StatusCode> {
+    StartTemplate { active_nav: NavTab::Start }
         .render()
         .map(Html)
         .map_err(|e| {

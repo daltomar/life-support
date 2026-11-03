@@ -56,8 +56,7 @@ async fn main() {
         .service(ServeDir::new(&fonts_dir));
 
     let app = Router::new()
-        .route("/", get(handlers::releases))
-        .route("/zero", get(handlers::zero))
+        .route("/", get(handlers::start))
         .route("/releases", get(handlers::releases))
         .route("/releases/{slug}", get(handlers::release))
         .route("/artists", get(handlers::artists))
