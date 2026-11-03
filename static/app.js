@@ -53,6 +53,7 @@ audio.addEventListener('ended', () => {
   if (fill) fill.style.width = '0%';
   if (dockedProgress) dockedProgress.style.width = '0%';
   if (timeEl) timeEl.textContent = '0:00';
+  if (queueIndex + 1 < queue.length) playQueueEntry(queueIndex + 1);
 });
 
 if (track) {
@@ -76,29 +77,44 @@ function updatePlayerInfo(title, artist, cover) {
   });
 }
 
-// ── Load a release into the player ──────────────────────
+// ── Playback queue ───────────────────────────────────────
+// Kept here rather than read from the page, so playback continues through the
+// list after the user navigates away from it.
+let queue = [];
+let queueIndex = -1;
+
+function playQueueEntry(index) {
+  const t = queue[index];
+  queueIndex = index;
+  audio.src = '/media/' + encodeURIComponent(t.file);
+  audio.play().catch(() => {});
+  updatePlayerInfo(t.title, t.artist, t.cover);
+}
+
+// Play a whole release from its first track.
 window.loadRelease = function(btn) {
   const json = btn.dataset.tracks;
   if (!json) return;
   let tracks;
   try { tracks = JSON.parse(json); } catch(_) { return; }
   if (!tracks.length) return;
-  const t = tracks[0];
-  audio.src = '/media/' + encodeURIComponent(t.file);
-  audio.play().catch(() => {});
-  updatePlayerInfo(t.title, btn.dataset.artist || '', btn.dataset.cover || '');
-};
-
-// ── Load a single track into the player ─────────────────
-window.loadTrack = function(btn) {
-  const file   = btn.dataset.file;
-  const title  = btn.dataset.title  || '';
   const artist = btn.dataset.artist || '';
   const cover  = btn.dataset.cover  || '';
-  if (!file) return;
-  audio.src = '/media/' + encodeURIComponent(file);
-  audio.play().catch(() => {});
-  updatePlayerInfo(title, artist, cover);
+  queue = tracks.map(t => ({ file: t.file, title: t.title, artist, cover }));
+  playQueueEntry(0);
+};
+
+// Play one track, then continue through the rest of the list it appears in.
+window.loadTrack = function(btn) {
+  if (!btn.dataset.file) return;
+  const buttons = Array.from(btn.closest('main').querySelectorAll('button[data-file]'));
+  queue = buttons.map(b => ({
+    file:   b.dataset.file,
+    title:  b.dataset.title  || '',
+    artist: b.dataset.artist || '',
+    cover:  b.dataset.cover  || '',
+  }));
+  playQueueEntry(buttons.indexOf(btn));
 };
 
 // ── Nav swap (keep audio playing across pages) ──────────
@@ -114,7 +130,7 @@ function setActiveNav(url) {
   });
 }
 
-async function navigate(url) {
+async function navigate(url, { fromHistory = false } = {}) {
   try {
     const res = await fetch(url, { headers: { 'X-Nav-Swap': '1' } });
     if (!res.ok) throw new Error('HTTP ' + res.status);
@@ -124,10 +140,16 @@ async function navigate(url) {
     const newMain = doc.querySelector('main');
     if (!newMain) throw new Error('response has no <main>');
     document.querySelector('main').replaceWith(newMain);
-    history.pushState(null, '', url);
+    document.title = doc.title;
+    // Back/Forward has already moved the history; only a new visit adds an entry.
+    if (!fromHistory && url !== location.href) history.pushState(null, '', url);
     setActiveNav(url);
   } catch (_) {
-    location.href = url;
+    if (fromHistory) {
+      location.replace(url);
+    } else {
+      location.href = url;
+    }
   }
 }
 
@@ -139,7 +161,7 @@ document.addEventListener('click', e => {
 });
 
 window.addEventListener('popstate', () => {
-  navigate(location.href);
+  navigate(location.href, { fromHistory: true });
 });
 
 // ── Mobile menu ──────────────────────────────────────────
