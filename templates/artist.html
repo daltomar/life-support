@@ -21,7 +21,7 @@
 </div>
 
 {% if !releases.is_empty() %}
-<div class="catalog-header" style="margin-top: 48px;">
+<div class="catalog-header catalog-header-spaced">
   <span class="mono-label">RELEASES</span>
   <div class="catalog-rule" aria-hidden="true"></div>
 </div>
@@ -50,7 +50,7 @@
     <svg width="10" height="12" viewBox="0 0 10 12" fill="currentColor" aria-hidden="true"><polygon points="0,0 10,6 0,12"/></svg>
   </button>
   {% else %}
-  <span class="btn-play-row" aria-hidden="true" style="opacity:0.2;cursor:default;">
+  <span class="btn-play-row btn-play-row-disabled" aria-hidden="true">
     <svg width="10" height="12" viewBox="0 0 10 12" fill="currentColor"><polygon points="0,0 10,6 0,12"/></svg>
   </span>
   {% endif %}
