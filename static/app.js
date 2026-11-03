@@ -117,13 +117,13 @@ function setActiveNav(url) {
 async function navigate(url) {
   try {
     const res = await fetch(url, { headers: { 'X-Nav-Swap': '1' } });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
     const html = await res.text();
     const parser = new DOMParser();
     const doc = parser.parseFromString(html, 'text/html');
     const newMain = doc.querySelector('main');
-    if (newMain) {
-      document.querySelector('main').replaceWith(newMain);
-    }
+    if (!newMain) throw new Error('response has no <main>');
+    document.querySelector('main').replaceWith(newMain);
     history.pushState(null, '', url);
     setActiveNav(url);
   } catch (_) {
