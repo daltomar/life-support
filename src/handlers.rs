@@ -205,6 +205,58 @@ pub async fn start() -> Result<Html<String>, StatusCode> {
         })
 }
 
+// ── Listen page ────────────────────────────────────────────────────────────
+
+pub struct ListenTrack {
+    pub position: String,
+    pub title: String,
+    pub file: String,
+    pub cover: Option<String>,
+    pub artist_name: String,
+    pub artist_slug: String,
+    pub release_title: String,
+    pub release_slug: String,
+}
+
+#[derive(Template)]
+#[template(path = "listen.html")]
+struct ListenTemplate {
+    active_nav: NavTab,
+    tracks: Vec<ListenTrack>,
+}
+
+/// Every track in the catalog: newest release first, album order within each.
+pub async fn listen(State(catalog): State<Arc<Catalog>>) -> Result<Html<String>, StatusCode> {
+    let mut tracks = Vec::new();
+    for r in &catalog.releases {
+        let artist_name = resolve_artist(&catalog, &r.artist);
+        let cover = r.cover.as_ref().filter(|s| !s.is_empty());
+        for t in &r.tracks {
+            tracks.push(ListenTrack {
+                position: format!("{:02}", tracks.len() + 1),
+                title: t.title.clone(),
+                file: t.file.clone(),
+                cover: cover.cloned(),
+                artist_name: artist_name.clone(),
+                artist_slug: r.artist.clone(),
+                release_title: r.title.clone(),
+                release_slug: r.slug.clone(),
+            });
+        }
+    }
+
+    ListenTemplate {
+        active_nav: NavTab::Listen,
+        tracks,
+    }
+    .render()
+    .map(Html)
+    .map_err(|e| {
+        eprintln!("template render error: {e}");
+        StatusCode::INTERNAL_SERVER_ERROR
+    })
+}
+
 // ── Artist detail page ─────────────────────────────────────
 
 pub struct ArtistRelease {

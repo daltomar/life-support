@@ -61,6 +61,7 @@ async fn main() {
         .route("/releases/{slug}", get(handlers::release))
         .route("/artists", get(handlers::artists))
         .route("/artists/{slug}", get(handlers::artist))
+        .route("/listen", get(handlers::listen))
         .nest_service("/static/fonts", font_service)
         .nest_service("/media", ServeDir::new(&media_dir))
         .nest_service("/static", ServeDir::new(&static_dir))
