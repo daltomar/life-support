@@ -5,7 +5,7 @@
 {% block content %}
 <h1 class="font-display">Artists</h1>
 
-<div class="artists-grid" style="grid-template-columns: repeat({{ grid_cols }}, minmax(0, 336px))">
+<div class="artists-grid artists-grid-{{ grid_cols }}">
   {% for artist in artists %}
   <article class="artist-card">
     <div class="artist-portrait-wrap">
