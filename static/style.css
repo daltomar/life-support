@@ -285,6 +285,43 @@ nav {
   color: var(--frame);
 }
 
+.player-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.player-skip {
+  width: 44px;
+  height: 44px;
+  border: none;
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: color 0.15s;
+}
+
+.player-skip:hover:not(:disabled) {
+  color: var(--text);
+}
+
+.player-skip:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.player-btn:focus-visible,
+.player-skip:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
 .player-progress {
   display: flex;
   align-items: center;
@@ -1020,6 +1057,10 @@ a.catalog-artist:hover {
     background: var(--frame);
     padding: 0 20px;
     z-index: 40;
+  }
+
+  .docked-player .player-controls {
+    gap: 0;
   }
 
   .docked-player::before {

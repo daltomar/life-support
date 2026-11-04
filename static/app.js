@@ -14,27 +14,33 @@ function fmt(s) {
   return m + ':' + sec;
 }
 
-if (playBtn) {
-  playBtn.addEventListener('click', () => {
-    if (queueIndex < 0) {
-      playRandomTrack();
-    } else if (audio.error) {
-      playQueueEntry(queueIndex);
-    } else if (cancelBufferWait) {
-      cancelBufferWait();
-    } else if (audio.paused) {
-      playWhenBuffered();
-    } else {
-      audio.pause();
-    }
-  });
+function togglePlayback() {
+  if (queueIndex < 0) {
+    playRandomTrack();
+  } else if (audio.error) {
+    playQueueEntry(queueIndex);
+  } else if (cancelBufferWait) {
+    cancelBufferWait();
+  } else if (audio.paused) {
+    playWhenBuffered();
+  } else {
+    audio.pause();
+  }
+}
+
+if (playBtn) playBtn.addEventListener('click', togglePlayback);
+
+// True from the moment playback is asked for, including the start buffer wait.
+function isPlayingOrStarting() {
+  return cancelBufferWait !== null || !audio.paused;
 }
 
 // Sets both the sidebar and the mobile docked button. Waiting for the start
 // buffer counts as playing: pressing the button then cancels the wait.
 function syncPlayButtons() {
   const buffering = cancelBufferWait !== null;
-  const playing = buffering || !audio.paused;
+  const playing = isPlayingOrStarting();
+  if (mediaSession) mediaSession.playbackState = playing ? 'playing' : 'paused';
   const icon = playing
     ? '<rect x="0" y="0" width="4" height="14"/><rect x="8" y="0" width="4" height="14"/>'
     : '<polygon points="0,0 12,7 0,14"/>';
@@ -74,10 +80,11 @@ audio.addEventListener('ended', () => {
 // stays "playing" after an error, so pause it to put the buttons back on Play.
 audio.addEventListener('error', () => {
   console.warn('Could not play', audio.currentSrc);
+  const wasPlaying = isPlayingOrStarting();
   if (cancelBufferWait) cancelBufferWait();
   resetProgress();
   if (queueIndex + 1 < queue.length) {
-    playQueueEntry(queueIndex + 1);
+    playQueueEntry(queueIndex + 1, wasPlaying);
   } else {
     audio.pause();
   }
@@ -110,17 +117,103 @@ function updatePlayerInfo(title, artist, cover) {
 let queue = [];
 let queueIndex = -1;
 
-function playQueueEntry(index) {
+// Setting src replaces any load still in progress, so switching tracks quickly
+// leaves only the last choice. With autoplay off the track loads paused.
+function playQueueEntry(index, autoplay = true) {
   const t = queue[index];
   queueIndex = index;
   if (cancelBufferWait) cancelBufferWait();
+  resetProgress();
+  if (durEl) durEl.textContent = '0:00';
   audio.src = '/media/' + encodeURIComponent(t.file);
+  updatePlayerInfo(t.title, t.artist, t.cover);
+  updateTrackControls();
+  updateMediaMetadata(t);
+  if (!autoplay) return;
   // Some browsers only allow play() during a click, and the buffer wait below
   // outlasts it. Starting and stopping here keeps the element allowed to play.
   audio.play().catch(() => {});
   audio.pause();
-  updatePlayerInfo(t.title, t.artist, t.cover);
   playWhenBuffered();
+}
+
+// ── Previous / next ──────────────────────────────────────
+// Previous restarts the track once it has played for this long.
+const RESTART_THRESHOLD_SECONDS = 3;
+
+function hasNextTrack() {
+  return queueIndex >= 0 && queueIndex + 1 < queue.length;
+}
+
+function playNextTrack() {
+  if (hasNextTrack()) playQueueEntry(queueIndex + 1, isPlayingOrStarting());
+}
+
+function playPreviousTrack() {
+  if (queueIndex < 0) return;
+  if (queueIndex === 0 || audio.currentTime > RESTART_THRESHOLD_SECONDS) {
+    audio.currentTime = 0;
+  } else {
+    playQueueEntry(queueIndex - 1, isPlayingOrStarting());
+  }
+}
+
+function setSkipButtonEnabled(btn, enabled) {
+  // A disabled button drops keyboard focus, so hand it to the play button.
+  if (!enabled && document.activeElement === btn) {
+    btn.parentElement.querySelector('.player-btn').focus();
+  }
+  btn.disabled = !enabled;
+}
+
+function updateTrackControls() {
+  const hasTrack = queueIndex >= 0;
+  document.querySelectorAll('.player-prev').forEach(btn => setSkipButtonEnabled(btn, hasTrack));
+  document.querySelectorAll('.player-next').forEach(btn => setSkipButtonEnabled(btn, hasNextTrack()));
+  if (mediaSession) {
+    setMediaAction('previoustrack', hasTrack ? playPreviousTrack : null);
+    setMediaAction('nexttrack', hasNextTrack() ? playNextTrack : null);
+  }
+}
+
+document.querySelectorAll('.player-prev').forEach(btn => btn.addEventListener('click', playPreviousTrack));
+document.querySelectorAll('.player-next').forEach(btn => btn.addEventListener('click', playNextTrack));
+
+// ── Media Session (media keys, lock screen, headphones) ──
+// Only available on secure origins: https, or localhost in development.
+const mediaSession = 'mediaSession' in navigator ? navigator.mediaSession : null;
+
+// Browsers may reject an action they don't support. These are optional extras,
+// so a failure here must not stop playback or the rest of this script.
+function setMediaAction(action, handler) {
+  try {
+    mediaSession.setActionHandler(action, handler);
+  } catch (e) {
+    console.warn('Media action not supported:', action);
+  }
+}
+
+function updateMediaMetadata(t) {
+  if (!mediaSession) return;
+  try {
+    mediaSession.metadata = new MediaMetadata({
+      title: t.title,
+      artist: t.artist,
+      artwork: t.cover ? [{ src: t.cover }] : [],
+    });
+  } catch (e) {
+    console.warn('Could not set media metadata', e);
+  }
+}
+
+if (mediaSession) {
+  // Through togglePlayback so a key press also respects the start buffer wait.
+  setMediaAction('play', () => {
+    if (!isPlayingOrStarting()) togglePlayback();
+  });
+  setMediaAction('pause', () => {
+    if (isPlayingOrStarting()) togglePlayback();
+  });
 }
 
 // ── Start buffer ─────────────────────────────────────────
