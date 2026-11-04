@@ -16,7 +16,11 @@ function fmt(s) {
 
 if (playBtn) {
   playBtn.addEventListener('click', () => {
-    if (audio.paused) {
+    if (queueIndex < 0) {
+      playRandomTrack();
+    } else if (audio.error) {
+      playQueueEntry(queueIndex);
+    } else if (audio.paused) {
       audio.play().catch(() => {});
     } else {
       audio.pause();
@@ -24,18 +28,20 @@ if (playBtn) {
   });
 }
 
+// Sets both the sidebar and the mobile docked button.
+function setPlayButtons(label, icon) {
+  document.querySelectorAll('.player-btn').forEach(btn => {
+    btn.setAttribute('aria-label', label);
+    btn.innerHTML = '<svg width="12" height="14" viewBox="0 0 12 14" fill="currentColor" aria-hidden="true">' + icon + '</svg>';
+  });
+}
+
 audio.addEventListener('play', () => {
-  if (playBtn) {
-    playBtn.setAttribute('aria-label', 'Pause');
-    playBtn.innerHTML = '<svg width="12" height="14" viewBox="0 0 12 14" fill="currentColor"><rect x="0" y="0" width="4" height="14"/><rect x="8" y="0" width="4" height="14"/></svg>';
-  }
+  setPlayButtons('Pause', '<rect x="0" y="0" width="4" height="14"/><rect x="8" y="0" width="4" height="14"/>');
 });
 
 audio.addEventListener('pause', () => {
-  if (playBtn) {
-    playBtn.setAttribute('aria-label', 'Play');
-    playBtn.innerHTML = '<svg width="12" height="14" viewBox="0 0 12 14" fill="currentColor"><polygon points="0,0 12,7 0,14"/></svg>';
-  }
+  setPlayButtons('Play', '<polygon points="0,0 12,7 0,14"/>');
 });
 
 audio.addEventListener('timeupdate', () => {
@@ -49,11 +55,27 @@ audio.addEventListener('loadedmetadata', () => {
   if (durEl) durEl.textContent = fmt(audio.duration);
 });
 
-audio.addEventListener('ended', () => {
+function resetProgress() {
   if (fill) fill.style.width = '0%';
   if (dockedProgress) dockedProgress.style.width = '0%';
   if (timeEl) timeEl.textContent = '0:00';
+}
+
+audio.addEventListener('ended', () => {
+  resetProgress();
   if (queueIndex + 1 < queue.length) playQueueEntry(queueIndex + 1);
+});
+
+// A track that fails to load is skipped. At the end of the queue the element
+// stays "playing" after an error, so pause it to put the buttons back on Play.
+audio.addEventListener('error', () => {
+  console.warn('Could not play', audio.currentSrc);
+  resetProgress();
+  if (queueIndex + 1 < queue.length) {
+    playQueueEntry(queueIndex + 1);
+  } else {
+    audio.pause();
+  }
 });
 
 if (track) {
@@ -108,21 +130,53 @@ window.loadRelease = function(btn) {
 window.loadTrack = function(btn) {
   if (!btn.dataset.file) return;
   const buttons = Array.from(btn.closest('main').querySelectorAll('button[data-file]'));
-  queue = buttons.map(b => ({
+  queue = buttons.map(trackFromButton);
+  playQueueEntry(buttons.indexOf(btn));
+};
+
+function trackFromButton(b) {
+  return {
     file:   b.dataset.file,
     title:  b.dataset.title  || '',
     artist: b.dataset.artist || '',
     cover:  b.dataset.cover  || '',
-  }));
-  playQueueEntry(buttons.indexOf(btn));
-};
+  };
+}
+
+// ── Random start ─────────────────────────────────────────
+// The Listen page is the list of every track. It is fetched ahead of time so
+// that pressing play can start audio straight away, inside the user's click.
+let allTracks = [];
+
+async function fetchAllTracks() {
+  try {
+    const res = await fetch('/listen');
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const doc = new DOMParser().parseFromString(await res.text(), 'text/html');
+    allTracks = Array.from(doc.querySelectorAll('main button[data-file]')).map(trackFromButton);
+  } catch (e) {
+    console.warn('Could not load the track list', e);
+  }
+}
+
+fetchAllTracks();
+
+async function playRandomTrack() {
+  if (!allTracks.length) await fetchAllTracks();
+  // Something else may have started while the list was loading.
+  if (queueIndex >= 0 || !allTracks.length) return;
+  queue = allTracks;
+  playQueueEntry(Math.floor(Math.random() * queue.length));
+}
 
 // ── Nav swap (keep audio playing across pages) ──────────
-function setActiveNav(url) {
-  const path = new URL(url, location.href).pathname;
+// Takes the highlight from the fetched page, because a detail page such as
+// /releases/x highlights a menu item whose URL is not its own.
+function setActiveNav(doc) {
+  const current = doc.querySelector('nav a[aria-current="page"]');
+  const path = current ? current.getAttribute('href') : null;
   document.querySelectorAll('nav a').forEach(a => {
-    const match = new URL(a.href, location.href).pathname === path;
-    if (match) {
+    if (a.getAttribute('href') === path) {
       a.setAttribute('aria-current', 'page');
     } else {
       a.removeAttribute('aria-current');
@@ -143,7 +197,9 @@ async function navigate(url, { fromHistory = false } = {}) {
     document.title = doc.title;
     // Back/Forward has already moved the history; only a new visit adds an entry.
     if (!fromHistory && url !== location.href) history.pushState(null, '', url);
-    setActiveNav(url);
+    // On mobile the page scrolls on <body>; on desktop <main> is new, so already at the top.
+    if (!fromHistory) document.body.scrollTop = 0;
+    setActiveNav(doc);
   } catch (_) {
     if (fromHistory) {
       location.replace(url);
@@ -153,10 +209,19 @@ async function navigate(url, { fromHistory = false } = {}) {
   }
 }
 
+// Whether a click on this link should swap <main> rather than leave the page.
+// Anything asking for a new tab or a file keeps the browser's own behaviour.
+function isPageLink(a, e) {
+  if (e.button !== 0 || e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) return false;
+  if (a.target || a.hasAttribute('download') || a.origin !== location.origin) return false;
+  return !a.pathname.startsWith('/media/') && !a.pathname.startsWith('/static/');
+}
+
 document.addEventListener('click', e => {
-  const a = e.target.closest('nav a');
-  if (!a) return;
+  const a = e.target.closest('a[href]');
+  if (!a || !isPageLink(a, e)) return;
   e.preventDefault();
+  closeMenu();
   navigate(a.href);
 });
 
@@ -176,9 +241,9 @@ if (menuBtn && nav) {
   });
 }
 
-if (navClose && nav) {
-  navClose.addEventListener('click', () => {
-    nav.classList.remove('open');
-    if (menuBtn) menuBtn.setAttribute('aria-expanded', 'false');
-  });
+function closeMenu() {
+  if (nav) nav.classList.remove('open');
+  if (menuBtn) menuBtn.setAttribute('aria-expanded', 'false');
 }
+
+if (navClose) navClose.addEventListener('click', closeMenu);
