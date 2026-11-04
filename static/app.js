@@ -20,29 +20,33 @@ if (playBtn) {
       playRandomTrack();
     } else if (audio.error) {
       playQueueEntry(queueIndex);
+    } else if (cancelBufferWait) {
+      cancelBufferWait();
     } else if (audio.paused) {
-      audio.play().catch(() => {});
+      playWhenBuffered();
     } else {
       audio.pause();
     }
   });
 }
 
-// Sets both the sidebar and the mobile docked button.
-function setPlayButtons(label, icon) {
+// Sets both the sidebar and the mobile docked button. Waiting for the start
+// buffer counts as playing: pressing the button then cancels the wait.
+function syncPlayButtons() {
+  const buffering = cancelBufferWait !== null;
+  const playing = buffering || !audio.paused;
+  const icon = playing
+    ? '<rect x="0" y="0" width="4" height="14"/><rect x="8" y="0" width="4" height="14"/>'
+    : '<polygon points="0,0 12,7 0,14"/>';
   document.querySelectorAll('.player-btn').forEach(btn => {
-    btn.setAttribute('aria-label', label);
+    btn.setAttribute('aria-label', playing ? 'Pause' : 'Play');
+    btn.setAttribute('aria-busy', String(buffering));
     btn.innerHTML = '<svg width="12" height="14" viewBox="0 0 12 14" fill="currentColor" aria-hidden="true">' + icon + '</svg>';
   });
 }
 
-audio.addEventListener('play', () => {
-  setPlayButtons('Pause', '<rect x="0" y="0" width="4" height="14"/><rect x="8" y="0" width="4" height="14"/>');
-});
-
-audio.addEventListener('pause', () => {
-  setPlayButtons('Play', '<polygon points="0,0 12,7 0,14"/>');
-});
+audio.addEventListener('play', syncPlayButtons);
+audio.addEventListener('pause', syncPlayButtons);
 
 audio.addEventListener('timeupdate', () => {
   const pct = audio.duration ? (audio.currentTime / audio.duration) * 100 : 0;
@@ -70,6 +74,7 @@ audio.addEventListener('ended', () => {
 // stays "playing" after an error, so pause it to put the buttons back on Play.
 audio.addEventListener('error', () => {
   console.warn('Could not play', audio.currentSrc);
+  if (cancelBufferWait) cancelBufferWait();
   resetProgress();
   if (queueIndex + 1 < queue.length) {
     playQueueEntry(queueIndex + 1);
@@ -108,9 +113,57 @@ let queueIndex = -1;
 function playQueueEntry(index) {
   const t = queue[index];
   queueIndex = index;
+  if (cancelBufferWait) cancelBufferWait();
   audio.src = '/media/' + encodeURIComponent(t.file);
+  // Some browsers only allow play() during a click, and the buffer wait below
+  // outlasts it. Starting and stopping here keeps the element allowed to play.
   audio.play().catch(() => {});
+  audio.pause();
   updatePlayerInfo(t.title, t.artist, t.cover);
+  playWhenBuffered();
+}
+
+// ── Start buffer ─────────────────────────────────────────
+// Browsers start playing with very little downloaded, which stutters when the
+// connection only just keeps up. Hold the start until a few seconds are ready.
+const START_BUFFER_SECONDS = 3;
+const START_BUFFER_TIMEOUT_MS = 5000;
+const START_BUFFER_POLL_MS = 100;
+// A buffered range can stop just short of the last moment of a track.
+const BUFFER_TOLERANCE_SECONDS = 0.1;
+let cancelBufferWait = null;
+
+function hasStartBuffer() {
+  const needed = Math.min(START_BUFFER_SECONDS, audio.duration - audio.currentTime);
+  if (isNaN(needed)) return false;
+  for (let i = 0; i < audio.buffered.length; i++) {
+    if (audio.buffered.start(i) <= audio.currentTime + BUFFER_TOLERANCE_SECONDS
+        && audio.buffered.end(i) >= audio.currentTime + needed - BUFFER_TOLERANCE_SECONDS) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function playWhenBuffered() {
+  if (audio.ended) audio.currentTime = 0;
+  if (hasStartBuffer()) {
+    audio.play().catch(syncPlayButtons);
+    return;
+  }
+  const startedAt = performance.now();
+  const timer = setInterval(() => {
+    if (hasStartBuffer() || performance.now() - startedAt >= START_BUFFER_TIMEOUT_MS) {
+      audio.play().catch(syncPlayButtons);
+      cancelBufferWait();
+    }
+  }, START_BUFFER_POLL_MS);
+  cancelBufferWait = () => {
+    clearInterval(timer);
+    cancelBufferWait = null;
+    syncPlayButtons();
+  };
+  syncPlayButtons();
 }
 
 // Play a whole release from its first track.

@@ -276,6 +276,10 @@ nav {
   transition: background 0.15s, color 0.15s;
 }
 
+.player-btn[aria-busy="true"] {
+  opacity: 0.5;
+}
+
 .player-btn:hover {
   background: var(--accent);
   color: var(--frame);
