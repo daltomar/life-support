@@ -390,7 +390,7 @@ main h1 {
 }
 
 /* ── Shared: cover / portrait placeholders ── */
-.featured-cover,
+.release-row-cover,
 .catalog-cover,
 .artist-portrait-wrap a {
   background: var(--tile);
@@ -408,79 +408,10 @@ main h1 {
   color: var(--dim);
 }
 
-/* ── Featured release ── */
-.featured-release {
-  display: flex;
-  gap: 44px;
-  margin-bottom: 40px;
-}
-
-.featured-cover {
-  width: 320px;
-  height: 320px;
-  flex-shrink: 0;
-  overflow: hidden;
-}
-
-.featured-cover img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
-.featured-info {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  max-width: 560px;
-}
-
-.featured-eyebrow {
-  color: var(--accent);
-}
-
-.featured-title {
-  font-size: 48px;
-  font-weight: 800;
-  font-stretch: 70%;
-  text-transform: uppercase;
-  line-height: 1;
-  letter-spacing: 0.02em;
-  color: var(--text);
-}
-
-.featured-artist a {
-  font-size: 19px;
-  color: var(--text);
-  text-decoration: none;
-}
-
-.featured-artist a:hover {
-  color: var(--accent);
-}
-
-.featured-meta {
-  font-family: 'Space Mono', 'Courier New', monospace;
-  font-size: 12px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-
-.featured-desc {
-  font-size: 15px;
-  line-height: 1.6;
-  color: var(--muted);
-}
-
-.featured-actions {
+/* ── Release detail: play button ── */
+.release-detail-actions {
   display: flex;
   gap: 12px;
-  margin-top: auto;
-}
-
-.release-detail-actions {
   margin-top: 20px;
 }
 
@@ -505,27 +436,6 @@ main h1 {
 .btn-play-release:hover {
   background: var(--accent);
   color: var(--frame);
-}
-
-.btn-view-release {
-  height: 44px;
-  padding: 0 22px;
-  background: none;
-  color: var(--text);
-  border: 1px solid var(--border);
-  font-size: 14px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  text-decoration: none;
-  display: flex;
-  align-items: center;
-  transition: border-color 0.15s, color 0.15s;
-}
-
-.btn-view-release:hover {
-  border-color: var(--muted);
-  color: var(--text);
 }
 
 /* ── Catalog list ── */
@@ -596,19 +506,8 @@ main h1 {
   color: var(--accent);
 }
 
-.m-artist,
 .m-date {
   display: none;
-}
-
-.catalog-artist {
-  font-size: 15px;
-  color: var(--muted);
-  text-decoration: none;
-}
-
-a.catalog-artist:hover {
-  color: var(--text);
 }
 
 .catalog-meta {
@@ -639,6 +538,186 @@ a.catalog-artist:hover {
 .btn-play-row-disabled {
   opacity: 0.2;
   cursor: default;
+}
+
+/* ── Releases page rows ── */
+.release-row {
+  --catalog-cover-size: 160px;
+  --release-action-width: 176px;
+  display: grid;
+  grid-template-columns: var(--catalog-cover-size) minmax(0, 1fr) var(--release-action-width);
+  grid-template-areas: "cover info actions";
+  gap: 16px 28px;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.release-row-cover {
+  grid-area: cover;
+  width: var(--catalog-cover-size);
+  height: var(--catalog-cover-size);
+  overflow: hidden;
+}
+
+.release-row-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.release-row-info {
+  grid-area: info;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  min-width: 0;
+}
+
+.release-row-num {
+  color: var(--accent);
+}
+
+.release-row-title {
+  max-width: 100%;
+  font-size: 30px;
+  font-weight: 800;
+  font-stretch: 70%;
+  text-transform: uppercase;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  overflow-wrap: anywhere;
+}
+
+.release-row-title a {
+  color: var(--text);
+  text-decoration: none;
+}
+
+.release-row-title a:hover,
+.release-row-artist a:hover {
+  color: var(--accent);
+}
+
+.release-row-artist a {
+  font-size: 16px;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.release-row-meta {
+  font-family: 'Space Mono', 'Courier New', monospace;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.release-row-desc {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  max-height: 3em; /* two lines where line-clamp is unsupported */
+  overflow: hidden;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.release-row-actions {
+  grid-area: actions;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.btn-release-action {
+  height: 44px;
+  padding: 0 8px;
+  background: none;
+  color: var(--text);
+  border: 1px solid var(--border);
+  font-family: 'Archivo', 'Helvetica Neue', Helvetica, sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: border-color 0.15s;
+}
+
+.btn-release-action:hover:not(:disabled) {
+  border-color: var(--muted);
+}
+
+.btn-release-action:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+/* Sidebar still visible: too narrow for three columns, so the buttons drop. */
+@media (max-width: 1039px) {
+  .release-row {
+    grid-template-columns: var(--catalog-cover-size) minmax(0, 1fr);
+    grid-template-areas:
+      "cover info"
+      "cover actions";
+    align-items: start;
+  }
+
+  .release-row-actions {
+    flex-direction: row;
+  }
+
+  .btn-release-action {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+}
+
+/* With the sidebar, the info column can't hold two buttons side by side. */
+@media (min-width: 768px) and (max-width: 899px) {
+  .release-row {
+    grid-template-areas:
+      "cover info"
+      "actions actions";
+    align-items: center;
+  }
+}
+
+@media (max-width: 559px) {
+  .release-row {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "cover"
+      "info"
+      "actions";
+  }
+
+  .release-row-cover {
+    /* Stacked: the cover follows the row width, up to a limit. */
+    width: 100%;
+    max-width: 320px;
+    height: auto;
+    aspect-ratio: 1;
+  }
+
+  .release-row-actions {
+    flex-direction: column;
+  }
+
+  .btn-release-action {
+    flex: none;
+  }
 }
 
 /* ── Artists grid ── */
@@ -983,28 +1062,12 @@ a.catalog-artist:hover {
     font-size: 36px;
   }
 
-  /* Featured release: stack vertically */
-  .featured-release {
-    flex-direction: column;
-    gap: 24px;
-  }
-
-  .featured-cover {
-    width: 100%;
-    height: auto;
-    aspect-ratio: 1;
-  }
-
-  .featured-title {
-    font-size: 36px;
-  }
-
-  .featured-actions {
+  /* Release detail: full-width play button */
+  .release-detail-actions {
     flex-direction: column;
   }
 
-  .btn-play-release,
-  .btn-view-release {
+  .btn-play-release {
     width: 100%;
     justify-content: center;
   }
@@ -1015,15 +1078,8 @@ a.catalog-artist:hover {
   }
 
   .catalog-num,
-  .catalog-artist,
   .catalog-meta {
     display: none;
-  }
-
-  .m-artist {
-    display: block;
-    font-size: 13px;
-    color: var(--muted);
   }
 
   .m-date {

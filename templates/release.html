@@ -21,12 +21,14 @@
     <p class="release-detail-artist">
       <a href="/artists/{{ artist_slug }}">{{ artist_name }}</a>
     </p>
-    <p class="release-detail-meta mono-label">{{ date }} · {{ format }}</p>
+    {% if !meta.is_empty() %}
+    <p class="release-detail-meta mono-label">{{ meta }}</p>
+    {% endif %}
     {% if !description.is_empty() %}
     <p class="release-detail-desc">{{ description }}</p>
     {% endif %}
     {% if !tracks.is_empty() %}
-    <div class="featured-actions release-detail-actions">
+    <div class="release-detail-actions">
       <button class="btn-play-release"
               data-tracks="{{ tracks_json }}"
               data-artist="{{ artist_name }}"
