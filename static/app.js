@@ -98,6 +98,88 @@ if (track) {
   });
 }
 
+// ── Volume ───────────────────────────────────────────────
+// Sidebar player only: the mobile docked player has no volume controls.
+const muteBtn      = document.getElementById('player-mute');
+const volumeSlider = document.getElementById('player-volume-slider');
+
+const VOLUME_KEY = 'player-volume';
+const MUTED_KEY  = 'player-muted';
+
+const SPEAKER_SHAPE = '<polygon points="0,4.5 3,4.5 7,1 7,13 3,9.5 0,9.5"/>';
+const VOLUME_ICON = SPEAKER_SHAPE
+  + '<rect x="9" y="5" width="1.5" height="4"/><rect x="12" y="3" width="1.5" height="8"/>';
+const MUTED_ICON = SPEAKER_SHAPE
+  + '<rect x="8.75" y="6.25" width="5.5" height="1.5" transform="rotate(45 11.5 7)"/>'
+  + '<rect x="8.75" y="6.25" width="5.5" height="1.5" transform="rotate(-45 11.5 7)"/>';
+
+// Storage can be blocked, and even touching localStorage can then throw.
+function readStored(key) {
+  try {
+    return localStorage.getItem(key);
+  } catch (_) {
+    return null;
+  }
+}
+
+function writeStored(key, value) {
+  try {
+    localStorage.setItem(key, value);
+  } catch (_) {
+    // The setting just won't survive a reload.
+  }
+}
+
+// iOS leaves audio.volume at 1 whatever it is set to.
+function canSetVolume() {
+  const before = audio.volume;
+  audio.volume = 0.5;
+  const settable = audio.volume === 0.5;
+  audio.volume = before;
+  return settable;
+}
+
+function restoreVolume() {
+  const level = parseFloat(readStored(VOLUME_KEY));
+  if (level >= 0 && level <= 1) audio.volume = level;
+  audio.muted = readStored(MUTED_KEY) === 'true';
+}
+
+// The slider is perceptual: volume = position squared.
+function syncVolumeControls() {
+  if (volumeSlider) {
+    const pos = Math.sqrt(audio.volume);
+    volumeSlider.value = pos;
+    volumeSlider.style.setProperty('--volume-pos', (pos * 100) + '%');
+  }
+  if (muteBtn) {
+    muteBtn.setAttribute('aria-label', audio.muted ? 'Unmute' : 'Mute');
+    muteBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true">'
+      + (audio.muted ? MUTED_ICON : VOLUME_ICON) + '</svg>';
+  }
+}
+
+if (volumeSlider) {
+  volumeSlider.hidden = !canSetVolume();
+  volumeSlider.addEventListener('input', () => {
+    const pos = Number(volumeSlider.value);
+    audio.volume = pos * pos;
+    audio.muted = false;
+  });
+}
+
+if (muteBtn) muteBtn.addEventListener('click', () => { audio.muted = !audio.muted; });
+
+audio.addEventListener('volumechange', () => {
+  syncVolumeControls();
+  writeStored(VOLUME_KEY, audio.volume);
+  writeStored(MUTED_KEY, audio.muted);
+});
+
+restoreVolume();
+// volumechange doesn't fire when the restored values match the defaults.
+syncVolumeControls();
+
 // ── Player info update ───────────────────────────────────
 function updatePlayerInfo(title, artist, cover) {
   document.querySelectorAll('.player-title').forEach(el => el.textContent = title);
