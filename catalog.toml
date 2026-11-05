@@ -2,7 +2,7 @@
 slug     = "prohlis"
 name     = "PROHLIS"
 city     = "Rivers Of Nihil"
-portrait = ""
+portrait = "prohlis.webp"
 bio      = "PROHLIS - exploring the edges"
 
 [[releases]]
