@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Listen — Life Support Records{% endblock %}
+
+{% block content %}
+<h1 class="font-display">Listen</h1>
+
+{% if tracks.is_empty() %}
+<p class="mono-label">No tracks yet</p>
+{% else %}
+<div class="catalog-header">
+  <span class="mono-label">ALL TRACKS</span>
+  <div class="catalog-rule" aria-hidden="true"></div>
+</div>
+{% for track in tracks %}
+<div class="track-row listen-row">
+  <span class="track-num mono-label">{{ track.position }}</span>
+  <div class="listen-cover">
+    {% if let Some(img) = track.cover %}
+    <img src="/media/covers/{{ img }}" alt="">
+    {% endif %}
+  </div>
+  <div class="listen-info">
+    <span class="track-title">{{ track.title }}</span>
+    <span class="listen-source">
+      <a href="/artists/{{ track.artist_slug }}">{{ track.artist_name }}</a>
+      ·
+      <a href="/releases/{{ track.release_slug }}">{{ track.release_title }}</a>
+    </span>
+  </div>
+  <button class="btn-play-row"
+          onclick="loadTrack(this)"
+          data-file="{{ track.file }}"
+          data-title="{{ track.title }}"
+          data-artist="{{ track.artist_name }}"
+          data-cover="{% if let Some(img) = track.cover %}/media/covers/{{ img }}{% endif %}"
+          aria-label="Play {{ track.title }}">
+    <svg width="10" height="12" viewBox="0 0 10 12" fill="currentColor" aria-hidden="true"><polygon points="0,0 10,6 0,12"/></svg>
+  </button>
+</div>
+{% endfor %}
+{% endif %}
+{% endblock %}

@@ -1,0 +1,1203 @@
+@font-face {
+  font-family: 'Creepster';
+  src: url('/static/fonts/creepster-regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 100 900;
+  font-stretch: 62% 125%;
+  font-display: swap;
+  src: url('/static/fonts/Archivo-Variable.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Space Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/static/fonts/SpaceMono-Regular.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Space Mono';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/static/fonts/SpaceMono-Bold.woff2') format('woff2');
+}
+
+:root {
+  --frame:  #0C0C0C;
+  --panel:  #171717;
+  --tile:   #222222;
+  --line:   #272727;
+  --text:   #E8E8E6;
+  --muted:  #9A9A97;
+  --dim:    #878784;
+  --border: #474747;
+  --accent: #39FF14;
+  --font-display: 'Creepster', 'Archivo', Impact, sans-serif;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  background: var(--frame);
+  color: var(--text);
+  font-family: 'Archivo', 'Helvetica Neue', Helvetica, sans-serif;
+}
+
+/* Grain overlay */
+.grain {
+  position: fixed;
+  inset: 0;
+  background: url('/static/grain.svg') repeat;
+  opacity: 0.14;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+  z-index: 100;
+}
+
+/* Root grid */
+.root {
+  display: grid;
+  grid-template-columns: 268px minmax(0, 1fr);
+  grid-template-rows: 96px minmax(0, 1fr);
+  height: 100vh;
+}
+
+/* ── Header ── */
+header {
+  grid-column: 1 / 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 0 32px;
+}
+
+.wordmark {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.font-display {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-stretch: normal;
+  font-synthesis: none;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  color: var(--text);
+}
+
+main h1.font-display {
+  font-family: 'Archivo', 'Helvetica Neue', Helvetica, sans-serif;
+  font-weight: 800;
+  font-stretch: 70%;
+}
+
+.wordmark-name {
+  font-size: 36px;
+  color: var(--accent);
+}
+
+.wordmark-slogan {
+  font-family: 'Space Mono', 'Courier New', monospace;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+}
+
+/* ── Sidebar nav ── */
+nav {
+  grid-column: 1;
+  grid-row: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 36px 24px 32px 32px;
+}
+
+.nav-label {
+  font-family: 'Space Mono', 'Courier New', monospace;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-bottom: 20px;
+}
+
+.nav-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+.nav-list a {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 44px;
+  text-decoration: none;
+  color: var(--muted);
+  font-size: 19px;
+  font-weight: 500;
+  transition: color 0.15s;
+}
+
+.nav-list.font-display a {
+  font-weight: 400;
+  font-stretch: normal;
+  font-synthesis: none;
+}
+
+.nav-list a:hover {
+  color: var(--text);
+}
+
+.nav-list a[aria-current="page"] {
+  color: var(--accent);
+}
+
+.nav-num {
+  font-family: 'Space Mono', 'Courier New', monospace;
+  font-size: 11px;
+  color: var(--dim);
+  flex-shrink: 0;
+}
+
+.nav-label-text {
+  flex-grow: 1;
+}
+
+.nav-dot {
+  width: 8px;
+  height: 8px;
+  background: var(--accent);
+  flex-shrink: 0;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.nav-list a[aria-current="page"] .nav-dot {
+  opacity: 1;
+}
+
+/* ── Now Playing (sidebar bottom) ── */
+.now-playing {
+  border-top: 1px solid var(--line);
+  padding-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.now-playing-label {
+  font-family: 'Space Mono', 'Courier New', monospace;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+
+.player-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.player-cover {
+  width: 44px;
+  height: 44px;
+  background: var(--tile);
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.player-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.player-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.player-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.player-artist {
+  font-size: 12px;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 2px;
+}
+
+.player-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid var(--accent);
+  background: none;
+  color: var(--accent);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.15s, color 0.15s;
+}
+
+.player-btn[aria-busy="true"] {
+  opacity: 0.5;
+}
+
+.player-btn:hover {
+  background: var(--accent);
+  color: var(--frame);
+}
+
+.player-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.player-skip {
+  width: 44px;
+  height: 44px;
+  border: none;
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: color 0.15s;
+}
+
+.player-skip:hover:not(:disabled) {
+  color: var(--text);
+}
+
+.player-skip:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.player-btn:focus-visible,
+.player-skip:focus-visible,
+.player-volume-slider:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.player-progress {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.player-time {
+  font-family: 'Space Mono', 'Courier New', monospace;
+  font-size: 11px;
+  color: var(--dim);
+  flex-shrink: 0;
+  min-width: 32px;
+}
+
+.player-track {
+  flex: 1;
+  height: 2px;
+  background: var(--line);
+  cursor: pointer;
+  position: relative;
+}
+
+.player-fill {
+  height: 100%;
+  background: var(--accent);
+  width: 0%;
+  pointer-events: none;
+}
+
+.player-duration {
+  font-family: 'Space Mono', 'Courier New', monospace;
+  font-size: 11px;
+  color: var(--dim);
+  flex-shrink: 0;
+  min-width: 32px;
+  text-align: right;
+}
+
+.player-volume {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.player-volume-slider {
+  --volume-pos: 100%;
+  -webkit-appearance: none;
+  appearance: none;
+  flex: 1;
+  min-width: 0;
+  height: 24px;
+  margin: 0;
+  background: none;
+  border-radius: 0;
+  cursor: pointer;
+}
+
+.player-volume-slider::-webkit-slider-runnable-track {
+  height: 2px;
+  background: linear-gradient(to right, var(--accent) var(--volume-pos), var(--line) var(--volume-pos));
+}
+
+.player-volume-slider::-moz-range-track {
+  height: 2px;
+  background: var(--line);
+}
+
+.player-volume-slider::-moz-range-progress {
+  height: 2px;
+  background: var(--accent);
+}
+
+.player-volume-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 10px;
+  height: 10px;
+  margin-top: -4px;
+  background: var(--accent);
+  border: none;
+  border-radius: 0;
+}
+
+.player-volume-slider::-moz-range-thumb {
+  width: 10px;
+  height: 10px;
+  background: var(--accent);
+  border: none;
+  border-radius: 0;
+}
+
+/* ── Content panel ── */
+main {
+  grid-column: 2;
+  grid-row: 2;
+  background: var(--panel);
+  border-top-left-radius: 20px;
+  padding: 48px 56px;
+  overflow-y: auto;
+}
+
+main h1 {
+  font-size: 34px;
+  font-weight: 800;
+  font-stretch: 70%;
+  text-transform: uppercase;
+  line-height: 1;
+  color: var(--text);
+  margin-bottom: 48px;
+}
+
+/* ── Shared: mono label ── */
+.mono-label {
+  font-family: 'Space Mono', 'Courier New', monospace;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+
+/* ── Shared: cover / portrait placeholders ── */
+.release-row-cover,
+.catalog-cover,
+.artist-portrait-wrap a {
+  background: var(--tile);
+  position: relative;
+}
+
+.cover-placeholder-label {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  font-family: 'Space Mono', 'Courier New', monospace;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+
+/* ── Release detail: play button ── */
+.release-detail-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.btn-play-release {
+  height: 44px;
+  padding: 0 22px;
+  background: transparent;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  font-family: 'Archivo', 'Helvetica Neue', Helvetica, sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background 0.15s, color 0.15s;
+}
+
+.btn-play-release:hover {
+  background: var(--accent);
+  color: var(--frame);
+}
+
+/* ── Catalog list ── */
+.catalog-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+
+.catalog-header-spaced {
+  margin-top: 48px;
+}
+
+.catalog-rule {
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+}
+
+.catalog-row {
+  display: grid;
+  grid-template-columns: 36px 64px minmax(0, 2fr) minmax(0, 1.4fr) 150px 44px;
+  gap: 20px;
+  align-items: center;
+  min-height: 84px;
+  border-bottom: 1px solid var(--line);
+}
+
+.catalog-num {
+  font-family: 'Space Mono', 'Courier New', monospace;
+  font-size: 11px;
+  color: var(--dim);
+}
+
+.catalog-cover {
+  width: 64px;
+  height: 64px;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.catalog-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.catalog-title-col {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.catalog-title-col a {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--text);
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.catalog-title-col a:hover {
+  color: var(--accent);
+}
+
+.m-date {
+  display: none;
+}
+
+.catalog-meta {
+  font-family: 'Space Mono', 'Courier New', monospace;
+  font-size: 12px;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+.btn-play-row {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: none;
+  color: var(--text);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+}
+
+.btn-play-row:hover {
+  background: var(--line);
+}
+
+.btn-play-row-disabled {
+  opacity: 0.2;
+  cursor: default;
+}
+
+/* ── Releases page rows ── */
+.release-row {
+  --catalog-cover-size: 160px;
+  --release-action-width: 176px;
+  display: grid;
+  grid-template-columns: var(--catalog-cover-size) minmax(0, 1fr) var(--release-action-width);
+  grid-template-areas: "cover info actions";
+  gap: 16px 28px;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.release-row-cover {
+  grid-area: cover;
+  width: var(--catalog-cover-size);
+  height: var(--catalog-cover-size);
+  overflow: hidden;
+}
+
+.release-row-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.release-row-info {
+  grid-area: info;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  min-width: 0;
+}
+
+.release-row-num {
+  color: var(--accent);
+}
+
+.release-row-title {
+  max-width: 100%;
+  font-size: 30px;
+  font-weight: 800;
+  font-stretch: 70%;
+  text-transform: uppercase;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  overflow-wrap: anywhere;
+}
+
+.release-row-title a {
+  color: var(--text);
+  text-decoration: none;
+}
+
+.release-row-title a:hover,
+.release-row-artist a:hover {
+  color: var(--accent);
+}
+
+.release-row-artist a {
+  font-size: 16px;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.release-row-meta {
+  font-family: 'Space Mono', 'Courier New', monospace;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.release-row-desc {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  max-height: 3em; /* two lines where line-clamp is unsupported */
+  overflow: hidden;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.release-row-actions {
+  grid-area: actions;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.btn-release-action {
+  height: 44px;
+  padding: 0 8px;
+  background: none;
+  color: var(--text);
+  border: 1px solid var(--border);
+  font-family: 'Archivo', 'Helvetica Neue', Helvetica, sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: border-color 0.15s;
+}
+
+.btn-release-action:hover:not(:disabled) {
+  border-color: var(--muted);
+}
+
+.btn-release-action:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+/* Sidebar still visible: too narrow for three columns, so the buttons drop. */
+@media (max-width: 1039px) {
+  .release-row {
+    grid-template-columns: var(--catalog-cover-size) minmax(0, 1fr);
+    grid-template-areas:
+      "cover info"
+      "cover actions";
+    align-items: start;
+  }
+
+  .release-row-actions {
+    flex-direction: row;
+  }
+
+  .btn-release-action {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+}
+
+/* With the sidebar, the info column can't hold two buttons side by side. */
+@media (min-width: 768px) and (max-width: 899px) {
+  .release-row {
+    grid-template-areas:
+      "cover info"
+      "actions actions";
+    align-items: center;
+  }
+}
+
+@media (max-width: 559px) {
+  .release-row {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "cover"
+      "info"
+      "actions";
+  }
+
+  .release-row-cover {
+    /* Stacked: the cover follows the row width, up to a limit. */
+    width: 100%;
+    max-width: 320px;
+    height: auto;
+    aspect-ratio: 1;
+  }
+
+  .release-row-actions {
+    flex-direction: column;
+  }
+
+  .btn-release-action {
+    flex: none;
+  }
+}
+
+/* ── Artists grid ── */
+.artists-grid {
+  display: grid;
+  gap: 28px;
+  justify-content: start;
+}
+
+/* One class per value of grid_cols, which handlers.rs clamps to 1..=3. */
+.artists-grid-1 { grid-template-columns: repeat(1, minmax(0, 336px)); }
+.artists-grid-2 { grid-template-columns: repeat(2, minmax(0, 336px)); }
+.artists-grid-3 { grid-template-columns: repeat(3, minmax(0, 336px)); }
+
+.artist-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.artist-portrait-wrap {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+}
+
+.artist-portrait-wrap a {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.artist-portrait-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.artist-num {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  font-family: 'Space Mono', 'Courier New', monospace;
+  font-size: 11px;
+  color: var(--dim);
+}
+
+.portrait-placeholder-label {
+  bottom: 12px;
+  left: 12px;
+}
+
+.artist-name a {
+  font-size: 32px;
+  font-weight: 800;
+  font-stretch: 70%;
+  text-transform: uppercase;
+  line-height: 1;
+  letter-spacing: 0.03em;
+  text-decoration: none;
+  color: var(--text);
+}
+
+.artist-name a:hover {
+  color: var(--accent);
+}
+
+.artist-meta {
+  font-family: 'Space Mono', 'Courier New', monospace;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* ── Artist detail ── */
+.artist-detail {
+  display: flex;
+  gap: 44px;
+  margin-bottom: 40px;
+  align-items: flex-start;
+}
+
+.artist-detail-portrait {
+  width: 240px;
+  flex-shrink: 0;
+  aspect-ratio: 4 / 5;
+  background: var(--tile);
+  overflow: hidden;
+  position: relative;
+}
+
+.artist-detail-portrait img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.artist-detail-info {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding-top: 4px;
+}
+
+.artist-detail-city {
+  color: var(--muted);
+}
+
+.artist-detail-bio {
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--muted);
+  max-width: 520px;
+}
+
+/* ── Release detail ── */
+.release-detail-header {
+  display: flex;
+  gap: 44px;
+  margin-bottom: 40px;
+}
+
+.release-detail-cover {
+  width: 280px;
+  height: 280px;
+  flex-shrink: 0;
+  background: var(--tile);
+  overflow: hidden;
+  position: relative;
+}
+
+.release-detail-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.release-detail-info {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.release-detail-eyebrow {
+  color: var(--text);
+}
+
+.release-detail-title {
+  font-size: 40px;
+  margin-bottom: 0;
+}
+
+.release-detail-artist a {
+  font-size: 17px;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.release-detail-artist a:hover {
+  color: var(--accent);
+}
+
+.release-detail-meta {
+  color: var(--muted);
+}
+
+.release-detail-desc {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--muted);
+  max-width: 480px;
+}
+
+/* ── Release page: per-cover accent ── */
+/* --accent is overridden via inline style on <main> when a palette is
+   available. Without it the element inherits the global green from :root. */
+.release-page .release-detail-eyebrow {
+  color: var(--accent);
+}
+
+.release-page .release-detail-title {
+  color: var(--accent);
+}
+
+.release-page .release-detail-artist a:hover {
+  color: var(--accent);
+}
+
+/* ── Tracklist ── */
+.track-row {
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr) 44px;
+  gap: 20px;
+  align-items: center;
+  min-height: 56px;
+  border-bottom: 1px solid var(--line);
+}
+
+.track-num {
+  color: var(--dim);
+}
+
+.track-title {
+  font-size: 15px;
+  color: var(--text);
+}
+
+.listen-row {
+  grid-template-columns: 36px 44px minmax(0, 1fr) 44px;
+  min-height: 72px;
+}
+
+.listen-cover {
+  width: 44px;
+  height: 44px;
+  overflow: hidden;
+  background: var(--line);
+}
+
+.listen-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.listen-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.listen-source {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.listen-source a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.listen-source a:hover {
+  color: var(--text);
+}
+
+/* ── Mobile (< 768px) ── */
+@media (max-width: 767px) {
+  html, body {
+    overflow: auto;
+  }
+
+  .root {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    min-height: 100vh;
+  }
+
+  header {
+    height: 68px;
+    padding: 0 20px;
+    flex-shrink: 0;
+  }
+
+  .wordmark-name {
+    font-size: 24px;
+  }
+
+  .wordmark-slogan {
+    display: none;
+  }
+
+  .menu-btn {
+    margin-left: auto;
+    width: 44px;
+    height: 44px;
+    background: none;
+    border: none;
+    color: var(--text);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+  }
+
+  .menu-btn span {
+    display: block;
+    width: 20px;
+    height: 1.5px;
+    background: currentColor;
+  }
+
+  nav {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    background: var(--frame);
+    padding: 80px 32px 40px;
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+  }
+
+  nav.open {
+    transform: translateX(0);
+  }
+
+  .nav-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 44px;
+    height: 44px;
+    background: none;
+    border: none;
+    color: var(--text);
+    cursor: pointer;
+    font-size: 20px;
+  }
+
+  main {
+    flex: 1;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    padding: 28px 20px 100px;
+    overflow-y: auto;
+  }
+
+  main h1 {
+    font-size: 44px;
+    margin-bottom: 32px;
+  }
+
+  main h2 {
+    font-size: 36px;
+  }
+
+  /* Release detail: full-width play button */
+  .release-detail-actions {
+    flex-direction: column;
+  }
+
+  .btn-play-release {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Catalog rows: hide number and date columns, collapse to 3-col */
+  .catalog-row {
+    grid-template-columns: 64px minmax(0, 1fr) 44px;
+  }
+
+  .catalog-num,
+  .catalog-meta {
+    display: none;
+  }
+
+  .m-date {
+    display: block;
+    font-family: 'Space Mono', 'Courier New', monospace;
+    font-size: 11px;
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  /* Artists: one per row */
+  .artists-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .now-playing {
+    display: none;
+  }
+
+  /* Docked player */
+  .docked-player {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 76px;
+    background: var(--frame);
+    padding: 0 20px;
+    z-index: 40;
+  }
+
+  .docked-player .player-controls {
+    gap: 0;
+  }
+
+  .docked-player::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--line);
+  }
+
+  .docked-progress {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 2px;
+    background: var(--accent);
+    width: 0%;
+    pointer-events: none;
+  }
+}
+
+@media (min-width: 768px) {
+  .menu-btn,
+  .nav-close,
+  .docked-player {
+    display: none;
+  }
+}
