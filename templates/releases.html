@@ -5,78 +5,53 @@
 {% block content %}
 <h1 class="font-display">Releases</h1>
 
-{% if let Some(f) = featured %}
-<section aria-label="Latest release"{% if let Some(accent) = f.accent.as_deref() %} style="--accent: {{ accent }}"{% endif %}>
-  <div class="featured-release">
-    <div class="featured-cover">
-      {% if let Some(img) = f.cover %}
-      <img src="/media/covers/{{ img }}" alt="{{ f.title }} cover">
-      {% else %}
-      <span class="cover-placeholder-label">[COVER]</span>
-      {% endif %}
-    </div>
-    <div class="featured-info">
-      <span class="mono-label featured-eyebrow">LATEST RELEASE · {{ f.catalog_num }}</span>
-      <h2 class="featured-title">{{ f.title }}</h2>
-      <p class="featured-artist"><a href="/artists/{{ f.artist_slug }}">{{ f.artist_name }}</a></p>
-      <p class="featured-meta">{{ f.date }} · {{ f.format }} · {{ f.track_count }} {% if f.track_count == 1 %}TRACK{% else %}TRACKS{% endif %}</p>
-      {% if !f.description.is_empty() %}
-      <p class="featured-desc">{{ f.description }}</p>
-      {% endif %}
-      <div class="featured-actions">
-        <button class="btn-play-release"
-                data-tracks="{{ f.tracks_json }}"
-                data-artist="{{ f.artist_name }}"
-                data-cover="{% if let Some(img) = f.cover %}/media/covers/{{ img }}{% endif %}"
-                onclick="loadRelease(this)"
-                aria-label="Play {{ f.title }}">
-          <svg width="10" height="12" viewBox="0 0 10 12" fill="currentColor" aria-hidden="true"><polygon points="0,0 10,6 0,12"/></svg>
-          Play release
-        </button>
-        <a class="btn-view-release" href="/releases/{{ f.slug }}">View release</a>
-      </div>
-    </div>
-  </div>
-</section>
-{% endif %}
-
-{% if !catalog.is_empty() %}
+{% if !releases.is_empty() %}
 <section aria-label="Catalog">
   <div class="catalog-header">
     <span class="mono-label">CATALOG</span>
     <div class="catalog-rule" aria-hidden="true"></div>
   </div>
-  {% for row in catalog %}
-  <div class="catalog-row">
-    <span class="catalog-num">{{ row.position }}</span>
-    <div class="catalog-cover">
-      {% if let Some(img) = row.cover %}
-      <img src="/media/covers/{{ img }}" alt="{{ row.title }} cover">
+  {% for r in releases %}
+  <div class="release-row"{% if let Some(accent) = r.accent.as_deref() %} style="--accent: {{ accent }}"{% endif %}>
+    <div class="release-row-cover">
+      {% if let Some(img) = r.cover %}
+      <img src="/media/covers/{{ img }}" alt="{{ r.title }} cover">
       {% else %}
       <span class="cover-placeholder-label">[COVER]</span>
       {% endif %}
     </div>
-    <div class="catalog-title-col">
-      <a href="/releases/{{ row.slug }}">{{ row.title }}</a>
-      <a class="m-artist" href="/artists/{{ row.artist_slug }}">{{ row.artist_name }}</a>
-      <span class="m-date">{{ row.date }} · {{ row.format }}</span>
+    <div class="release-row-info">
+      <span class="mono-label release-row-num">{{ r.catalog_num }}</span>
+      <h2 class="release-row-title"><a href="/releases/{{ r.slug }}">{{ r.title }}</a></h2>
+      {% if !r.artist_name.is_empty() %}
+      <p class="release-row-artist"><a href="/artists/{{ r.artist_slug }}">{{ r.artist_name }}</a></p>
+      {% endif %}
+      {% if !r.meta.is_empty() %}
+      <p class="release-row-meta">{{ r.meta }}</p>
+      {% endif %}
+      {% if let Some(description) = r.description %}
+      <p class="release-row-desc">{{ description }}</p>
+      {% endif %}
     </div>
-    <a class="catalog-artist" href="/artists/{{ row.artist_slug }}">{{ row.artist_name }}</a>
-    <span class="catalog-meta">{{ row.date }} · {{ row.format }}</span>
-    {% if row.has_tracks %}
-    <button class="btn-play-row"
-            data-tracks="{{ row.tracks_json }}"
-            data-artist="{{ row.artist_name }}"
-            data-cover="{% if let Some(img) = row.cover %}/media/covers/{{ img }}{% endif %}"
-            onclick="loadRelease(this)"
-            aria-label="Play {{ row.title }}">
-      <svg width="10" height="12" viewBox="0 0 10 12" fill="currentColor" aria-hidden="true"><polygon points="0,0 10,6 0,12"/></svg>
-    </button>
-    {% else %}
-    <span class="btn-play-row btn-play-row-disabled" aria-hidden="true">
-      <svg width="10" height="12" viewBox="0 0 10 12" fill="currentColor"><polygon points="0,0 10,6 0,12"/></svg>
-    </span>
-    {% endif %}
+    <div class="release-row-actions">
+      <a class="btn-release-action" href="/releases/{{ r.slug }}" aria-label="View release {{ r.title }}">View release</a>
+      {% if r.has_tracks %}
+      <button class="btn-release-action"
+              data-tracks="{{ r.tracks_json }}"
+              data-artist="{{ r.artist_name }}"
+              data-cover="{% if let Some(img) = r.cover %}/media/covers/{{ img }}{% endif %}"
+              onclick="loadRelease(this)"
+              aria-label="Play {{ r.title }}">
+        <svg width="10" height="12" viewBox="0 0 10 12" fill="currentColor" aria-hidden="true"><polygon points="0,0 10,6 0,12"/></svg>
+        Play release
+      </button>
+      {% else %}
+      <button class="btn-release-action" disabled aria-label="Play {{ r.title }}: no tracks available">
+        <svg width="10" height="12" viewBox="0 0 10 12" fill="currentColor" aria-hidden="true"><polygon points="0,0 10,6 0,12"/></svg>
+        Play release
+      </button>
+      {% endif %}
+    </div>
   </div>
   {% endfor %}
 </section>

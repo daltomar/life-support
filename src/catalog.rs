@@ -14,7 +14,9 @@ pub struct Release {
     pub title: String,
     pub artist: String,
     pub catalog_num: String,
+    #[serde(default)]
     pub date: String,
+    #[serde(default)]
     pub format: String,
     pub description: Option<String>,
     pub cover: Option<String>,
@@ -149,6 +151,10 @@ pub fn format_date(iso: &str) -> String {
     const MONTHS: [&str; 12] = [
         "JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC",
     ];
+    let iso = iso.trim();
+    if iso.is_empty() {
+        return String::new();
+    }
     let mut parts = iso.splitn(3, '-');
     let Some(year) = parts.next() else {
         return iso.to_string();
@@ -160,7 +166,7 @@ pub fn format_date(iso: &str) -> String {
         .copied();
     let day = parts.next().unwrap_or("");
     match month {
-        Some(m) => format!("{day} {m} {year}"),
+        Some(m) => format!("{day} {m} {year}").trim().to_string(),
         None => {
             eprintln!("warning: unrecognised date format '{iso}' in catalog");
             iso.to_string()
@@ -168,6 +174,140 @@ pub fn format_date(iso: &str) -> String {
     }
 }
 
+fn join_meta(parts: &[&str]) -> String {
+    parts
+        .iter()
+        .map(|part| part.trim())
+        .filter(|part| !part.is_empty())
+        .collect::<Vec<_>>()
+        .join(" · ")
+}
+
+/// The "01 AUG 2024 · DIGITAL" line. A missing part is left out along with
+/// its separator.
+pub fn date_format_line(date: &str, format: &str) -> String {
+    join_meta(&[&format_date(date), format])
+}
+
+/// The "01 AUG 2024 · DIGITAL · 10 TRACKS" line. A missing part is left out
+/// along with its separator.
+pub fn release_meta(date: &str, format: &str, track_count: usize) -> String {
+    let tracks = match track_count {
+        0 => String::new(),
+        1 => "1 TRACK".to_string(),
+        n => format!("{n} TRACKS"),
+    };
+    join_meta(&[&format_date(date), format, &tracks])
+}
+
 pub fn tracks_json(tracks: &[Track]) -> String {
     serde_json::to_string(tracks).unwrap_or_else(|_| "[]".to_string())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn load_toml(name: &str, toml: &str) -> Catalog {
+        let path =
+            std::env::temp_dir().join(format!("life-support-{name}-{}.toml", std::process::id()));
+        std::fs::write(&path, toml).unwrap();
+        let loaded = Catalog::load(path.to_str().unwrap());
+        std::fs::remove_file(&path).unwrap();
+        loaded.unwrap()
+    }
+
+    #[test]
+    fn meta_with_every_field() {
+        assert_eq!(
+            release_meta("2024-08-01", "Digital", 10),
+            "01 AUG 2024 · Digital · 10 TRACKS"
+        );
+    }
+
+    #[test]
+    fn meta_uses_singular_for_one_track() {
+        assert_eq!(
+            release_meta("2024-08-01", "Digital", 1),
+            "01 AUG 2024 · Digital · 1 TRACK"
+        );
+    }
+
+    #[test]
+    fn meta_leaves_out_missing_parts_and_their_separators() {
+        assert_eq!(release_meta("", "Digital", 2), "Digital · 2 TRACKS");
+        assert_eq!(release_meta("2024-08-01", " ", 2), "01 AUG 2024 · 2 TRACKS");
+        assert_eq!(
+            release_meta("2024-08-01", "Digital", 0),
+            "01 AUG 2024 · Digital"
+        );
+        assert_eq!(release_meta("", "", 3), "3 TRACKS");
+        assert_eq!(release_meta("", "", 0), "");
+    }
+
+    #[test]
+    fn date_format_line_leaves_out_missing_parts() {
+        assert_eq!(
+            date_format_line("2024-08-01", "Digital"),
+            "01 AUG 2024 · Digital"
+        );
+        assert_eq!(date_format_line("", "Digital"), "Digital");
+        assert_eq!(date_format_line("2024-08-01", ""), "01 AUG 2024");
+        assert_eq!(date_format_line("", ""), "");
+    }
+
+    #[test]
+    fn date_without_a_day_has_no_leading_space() {
+        assert_eq!(format_date("2024-08"), "AUG 2024");
+    }
+
+    #[test]
+    fn load_sorts_newest_release_first() {
+        let catalog = load_toml(
+            "order",
+            r#"
+            [[releases]]
+            slug = "old"
+            title = "Old"
+            artist = "a"
+            catalog_num = "LSR001"
+            date = "2020-08-01"
+            format = "Digital"
+
+            [[releases]]
+            slug = "new"
+            title = "New"
+            artist = "a"
+            catalog_num = "LSR003"
+            date = "2024-08-01"
+            format = "Digital"
+
+            [[releases]]
+            slug = "middle"
+            title = "Middle"
+            artist = "a"
+            catalog_num = "LSR002"
+            date = "2022-01-15"
+            format = "Digital"
+            "#,
+        );
+        let slugs: Vec<_> = catalog.releases.iter().map(|r| r.slug.as_str()).collect();
+        assert_eq!(slugs, ["new", "middle", "old"]);
+    }
+
+    #[test]
+    fn load_accepts_a_release_without_date_or_format() {
+        let catalog = load_toml(
+            "optional",
+            r#"
+            [[releases]]
+            slug = "bare"
+            title = "Bare"
+            artist = "a"
+            catalog_num = "LSR001"
+            "#,
+        );
+        assert_eq!(catalog.releases[0].date, "");
+        assert_eq!(catalog.releases[0].format, "");
+    }
 }

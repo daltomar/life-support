@@ -37,9 +37,9 @@
   </div>
   <div class="catalog-title-col">
     <a href="/releases/{{ r.slug }}">{{ r.title }}</a>
-    <span class="m-date">{{ r.date }} · {{ r.format }}</span>
+    <span class="m-date">{{ r.meta }}</span>
   </div>
-  <span class="catalog-meta">{{ r.date }} · {{ r.format }}</span>
+  <span class="catalog-meta">{{ r.meta }}</span>
   {% if r.has_tracks %}
   <button class="btn-play-row"
           data-tracks="{{ r.tracks_json }}"
