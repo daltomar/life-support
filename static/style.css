@@ -1116,6 +1116,24 @@ main h1 {
     font-size: 36px;
   }
 
+  /* Artist and release detail: image above the text */
+  .artist-detail,
+  .release-detail-header {
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .artist-detail-portrait,
+  .release-detail-cover {
+    width: 100%;
+    max-width: 320px;
+  }
+
+  .release-detail-cover {
+    height: auto;
+    aspect-ratio: 1;
+  }
+
   /* Release detail: full-width play button */
   .release-detail-actions {
     flex-direction: column;
