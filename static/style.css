@@ -949,6 +949,22 @@ main h1 {
   max-width: 480px;
 }
 
+/* Phones, and tablets where the sidebar leaves no room for cover and title
+   side by side: cover above the text. */
+@media (max-width: 899px) {
+  .release-detail-header {
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .release-detail-cover {
+    width: 100%;
+    max-width: 320px;
+    height: auto;
+    aspect-ratio: 1;
+  }
+}
+
 /* ── Release page: per-cover accent ── */
 /* --accent is overridden via inline style on <main> when a palette is
    available. Without it the element inherits the global green from :root. */
@@ -1116,22 +1132,15 @@ main h1 {
     font-size: 36px;
   }
 
-  /* Artist and release detail: image above the text */
-  .artist-detail,
-  .release-detail-header {
+  /* Artist detail: portrait above the text */
+  .artist-detail {
     flex-direction: column;
     gap: 24px;
   }
 
-  .artist-detail-portrait,
-  .release-detail-cover {
+  .artist-detail-portrait {
     width: 100%;
     max-width: 320px;
-  }
-
-  .release-detail-cover {
-    height: auto;
-    aspect-ratio: 1;
   }
 
   /* Release detail: full-width play button */
