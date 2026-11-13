@@ -5,6 +5,13 @@ city     = "Rivers Of Nihil"
 portrait = "prohlis.webp"
 bio      = "PROHLIS - exploring the edges"
 
+[[artists]]
+slug     = "suvvaku"
+name     = "SUVVAKU"
+city     = "Rivers Of Nihil"
+portrait = "suvvaku.webp"
+bio      = "SUVVAKU - shame was forgotten"
+
 [[releases]]
 slug        = "disco-02"
 title       = "Digital Labyrinth"
